@@ -145,7 +145,7 @@ b = Time.now
 db = SQLite3::Database.open(Dir.pwd + "/data/douban.db")
 
 movies = {}
-db.execute("select * from movies_list") do |row|
+db.execute("select * from movies_list order by watched_date desc") do |row|
   id, title, original_title, my_rating, watched_date = row
   
   movies[id] = {
