@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" type="text/css" href="/css/base.css">
+    <title>Sedgewick 的飯否</title>
+    <style>
+      body {
+        padding: 10px;
+        font-size: 14px;
+      }
+
+      h1 {
+        font-size: 16px;
+      }
+
+      h2 {
+        font-size: 20px;
+        text-decoration: underline;
+      }
+
+      h3 {
+        font-size: 20px;
+      }
+
+      section > header {
+        margin-bottom: 10px;
+      }
+
+      section > header > h2 {
+        font-size: 20px;
+      }
+
+      ul {
+        list-style-position: inside;
+        margin: 10px 0;
+	    background-color: #fafafa;
+	    border: 1px solid #ccc;
+	    border-radius: 4px;
+	    padding: 10px;
+      }
+	  
+      li {
+        list-style-position: inside;
+        margin: 5px 0;
+      }
+	  
+	  li a {
+	    color: #999;
+        font-size: smaller;
+	  }
+
+      section p {
+        margin: 15px 0 30px 0;
+      }
+
+      ul:hover {
+        background-color: #fbf9e6;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1><a href="/">飯糰🍙</a> / lite 飯否</h1>
+    </header>
+    <section>
+      <br /> <br />
+      
+		
+	  <% @statuses.each do |v| %>
+		<ul>
+		  <li>
+            <a target="_blank" href="http://fanfou.com/statuses/<%= v["id"]%>?fr=viewreply"><%= (Time.parse(v["created_at"]) + 3600 * 8).to_s[0..-7] %></a>
+			- <%= v["text"].gsub(/\n/, "<br />") %>
+			<br />
+			<% unless v["photo"].nil? %>
+			  <a href="<%= v["photo"]["largeurl"] %>">
+			    <img src="<%= v["photo"]["thumburl"] %>">
+			  </a>
+			<% end %>
+		  </li>
+		</ul>
+	  <% end %>
+		
+      
+    </section>
+    <footer>
+      <a href="mailto:yx.pu@live.com">yx.pu@live.com</a>
+      <p>&copy; 抄襲自 Alexis Sellier</p>
+    </footer>
+  </body>
+</html>
+

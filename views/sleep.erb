@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" type="text/css" href="/css/base.css">
+    <title>Sedgewick 的飯否</title>
+    <style>
+      body {
+        padding: 10px;
+        font-size: 14px;
+      }
+
+      h1 {
+        font-size: 16px;
+      }
+
+      h2 {
+        font-size: 20px;
+        text-decoration: underline;
+      }
+
+      h3 {
+        font-size: 20px;
+      }
+
+      section > header {
+        margin-bottom: 10px;
+      }
+
+      section > header > h2 {
+        font-size: 20px;
+      }
+
+      ul {
+        list-style-position: inside;
+        margin: 10px 0;
+	    background-color: #fafafa;
+	    border: 1px solid #ccc;
+	    border-radius: 4px;
+	    padding: 10px;
+      }
+	  
+      li {
+        list-style-position: inside;
+        margin: 5px 0;
+      }
+	  
+	  li a {
+	    color: #999;
+        font-size: smaller;
+	  }
+
+      section p {
+        margin: 15px 0 30px 0;
+      }
+
+      ul:hover {
+        background-color: #fbf9e6;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1><a href="/">飯糰🍙</a> / <%= @year || "2017" %> 年晚睡指數</h1>
+    </header>
+    <section>
+      <br /> <br />
+      
+  	<div class="htmleaf-container">
+  		<div class="htmleaf-content">
+  			<div style="width: 100%; margin: 0 auto;">
+  			<div>
+  				<canvas id="canvas" height="300" width="600"></canvas>
+  			</div>
+  		</div>
+  		</div>
+  	</div>
+	
+	<%
+	    require 'date'
+		
+		year = @year || "2017"
+		
+		d = Array.new(367, 0)
+		@statuses_pool.values.each do |e|
+		    if e["created_at"][0..3] == year
+			   hour = e["created_at"][11..12].to_i
+			   date = Date.parse(e["created_at"][0..9])
+			   
+			   d[date.yday] = hour if d[date.yday] < hour && hour <= 6
+			end
+		end
+		
+		nights = Hash.new(0)
+		stay_up_index = Hash.new(0)
+		d[1..-1].each_with_index do |c, yday|
+		    if c > 0
+			    stay_up_index[yday / 7 + 1] += c 
+				nights[yday / 7 + 1] += 1
+			end
+		    
+		end
+		
+	%>
+	
+  	<script src="js/Chart.min.js"></script>
+  	<script>
+  	var randomScalingFactor = function(){ return Math.round(Math.random()*100)};
+  		var lineChartData = {
+  			labels : <%= (1..52).to_a.to_s %>,
+  			datasets : [
+  				{
+  					label: "stay up index",
+  					fillColor : "rgba(220,220,220,0.2)",
+  					strokeColor : "rgba(220,220,220,1)",
+  					pointColor : "rgba(220,220,220,1)",
+  					pointStrokeColor : "#fff",
+  					pointHighlightFill : "#fff",
+  					pointHighlightStroke : "rgba(220,220,220,1)",
+  					data : <%= (1..52).to_a.map{ |e| stay_up_index[e]}.to_s %>
+  				},
+  				{
+  					label: "the nights of staying up",
+  					fillColor : "rgba(151,187,205,0.2)",
+  					strokeColor : "rgba(151,187,205,1)",
+  					pointColor : "rgba(151,187,205,1)",
+  					pointStrokeColor : "#fff",
+  					pointHighlightFill : "#fff",
+  					pointHighlightStroke : "rgba(151,187,205,1)",
+  					data : <%= (1..52).to_a.map{ |e| nights[e]}.to_s %>
+  				}
+  			]
+
+  		}
+
+  	window.onload = function(){
+  		var ctx = document.getElementById("canvas").getContext("2d");
+  		window.myLine = new Chart(ctx).Line(lineChartData, {
+  			responsive: true
+  		});
+  	}
+
+  	</script>
+	  
+		
+
+	  
+	  
+		
+      
+    </section>
+    <footer>
+      <a href="mailto:yx.pu@live.com">yx.pu@live.com</a>
+      <p>&copy; 抄襲自 Alexis Sellier</p>
+    </footer>
+  </body>
+</html>
+

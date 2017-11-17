@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" type="text/css" href="/css/base.css">
+    <title>Sedgewick 的飯否</title>
+    <style>
+      body {
+        padding: 10px;
+        font-size: 14px;
+      }
+
+      h1 {
+        font-size: 16px;
+      }
+
+      h2 {
+        font-size: 20px;
+        text-decoration: underline;
+      }
+
+      h3 {
+        font-size: 20px;
+      }
+
+      section > header {
+        margin-bottom: 10px;
+      }
+
+      section > header > h2 {
+        font-size: 20px;
+      }
+
+      ul {
+        list-style-position: inside;
+        margin: 10px 0;
+	    background-color: #fafafa;
+	    border: 1px solid #ccc;
+	    border-radius: 4px;
+	    padding: 10px;
+      }
+	  
+      li {
+        list-style-position: inside;
+        margin: 5px 0;
+      }
+	  
+	  li a {
+	    color: #999;
+        font-size: smaller;
+	  }
+
+      section p {
+        margin: 15px 0 30px 0;
+      }
+
+      ul:hover {
+        background-color: #fbf9e6;
+      }
+	  
+	  .idea {
+	    background-color: #fcf284;
+		display: inline-block;
+		border-radius: 4px;
+		padding: 0px 10px;
+		box-shadow: 1px 1px 3px #9b8e02; 
+	  }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1><a href="/">飯糰🍙</a> / 創意💡</h1>
+    </header>
+    <section>
+      <br /> <br />
+
+<% @conversations.each do |items|
+  content = ""
+  items.each do |k|
+    content += @statuses_pool[k]["text"]
+  end
+  next unless content =~ /創意|想法|靈感|考慮/
+%>
+
+  <ul>
+	  
+  <% items.each do |k| %>
+  
+	<li>
+      <a target="_blank" href="http://fanfou.com/statuses/<%= k %>?fr=viewreply"><%= Time.parse(@statuses_pool[k]["created_at"]).to_s[0..-7] %></a>
+	  - <%= @statuses_pool[k]["text"].gsub(/\n/, "<br />").gsub(/(#\+1.+?#)/, '<div class="idea">\1</div>') %>
+	  <br />
+	  <% unless @statuses_pool[k]["photo_url"].nil? %>
+	    <a href="<%= @statuses_pool[k]["photo_url"] %>">
+	      <img src="<%= @statuses_pool[k]["photo_url"] %>">
+	    </a>
+	  <% end %>
+    </li>
+	
+  <% end %>
+  
+  </ul>
+  
+<% end %>
+		
+      
+    </section>
+    <footer>
+      <a href="mailto:yx.pu@live.com">yx.pu@live.com</a>
+      <p>&copy; 抄襲自 Alexis Sellier</p>
+    </footer>
+  </body>
+</html>
+

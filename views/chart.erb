@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" type="text/css" href="/css/base.css">
+    <title>Sedgewick 的飯否</title>
+    <style>
+      body {
+        padding: 10px;
+        font-size: 14px;
+      }
+
+      h1 {
+        font-size: 16px;
+		color: white;
+      }
+
+      h2 {
+        font-size: 20px;
+        text-decoration: underline;
+      }
+
+      h3 {
+        font-size: 20px;
+      }
+
+      section > header {
+        margin-bottom: 10px;
+      }
+
+      section > header > h2 {
+        font-size: 20px;
+      }
+
+      .status ul {
+        list-style-position: inside;
+        margin: 10px 0;
+	    background-color: #fafafa;
+	    border: 1px solid #ccc;
+	    border-radius: 4px;
+	    padding: 10px;
+      }
+	  
+      .status li {
+        list-style-position: inside;
+        margin: 5px 0;
+      }
+	  
+	  .status li a {
+	    color: #999;
+        font-size: smaller;
+	  }
+
+      section p {
+        margin: 15px 0 30px 0;
+      }
+
+      ul:hover {
+        background-color: #fbf9e6;
+      }
+	  
+	  .tag {
+  	    background-color: #fcf284;
+  		display: inline-block;
+  		border-radius: 4px;
+  		padding: 0px 10px;
+  		box-shadow: 1px 1px 3px #9b8e02; 
+	  }
+	  
+	  
+	  
+	  
+	  
+      body {
+          background: #555 url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAB9JREFUeNpi/P//PwM6YGLAAuCCmpqacC2MRGsHCDAA+fIHfeQbO8kAAAAASUVORK5CYII=);
+      }
+    
+      a {
+          color: #ccc;
+      }
+    
+      /*-------------------------------------*/
+    
+      .cf:before, .cf:after{
+        content:"";
+        display:table;
+      }
+    
+      .cf:after{
+        clear:both;
+      }
+
+      .cf{
+        zoom:1;
+      }
+
+      /*-------------------------------------*/	
+    
+      .form-wrapper {
+          width: 600px;
+          padding: 15px;
+          margin: 150px auto 30px auto;
+          background: #444;
+          background: rgba(0,0,0,.2);
+          -moz-border-radius: 10px;
+          -webkit-border-radius: 10px;
+          border-radius: 10px;
+          -moz-box-shadow: 0 1px 1px rgba(0,0,0,.4) inset, 0 1px 0 rgba(255,255,255,.2);
+          -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.4) inset, 0 1px 0 rgba(255,255,255,.2);
+          box-shadow: 0 1px 1px rgba(0,0,0,.4) inset, 0 1px 0 rgba(255,255,255,.2);
+      }
+    
+      .form-wrapper input {
+          width: 480px;
+          height: 20px;
+          padding: 10px 5px;
+          float: left;    
+          font: bold 15px 'lucida sans', 'trebuchet MS', 'Tahoma';
+          border: 0;
+          background: #eee;
+          -moz-border-radius: 3px 0 0 3px;
+          -webkit-border-radius: 3px 0 0 3px;
+          border-radius: 3px 0 0 3px;      
+      }
+    
+      .form-wrapper input:focus {
+          outline: 0;
+          background: #fff;
+          -moz-box-shadow: 0 0 2px rgba(0,0,0,.8) inset;
+          -webkit-box-shadow: 0 0 2px rgba(0,0,0,.8) inset;
+          box-shadow: 0 0 2px rgba(0,0,0,.8) inset;
+      }
+    
+      .form-wrapper input::-webkit-input-placeholder {
+         color: #999;
+         font-weight: normal;
+      }
+    
+      .form-wrapper input:-moz-placeholder {
+          color: #999;
+          font-weight: normal;
+      }
+    
+      .form-wrapper input:-ms-input-placeholder {
+          color: #999;
+          font-weight: normal;
+      }    
+    
+      .form-wrapper button {
+  		overflow: visible;
+          position: relative;
+          float: right;
+          border: 0;
+          padding: 0;
+          cursor: pointer;
+          height: 40px;
+          width: 110px;
+          font: bold 15px/40px 'lucida sans', 'trebuchet MS', 'Tahoma';
+          color: #fff;
+          text-transform: uppercase;
+          background: #d83c3c;
+          -moz-border-radius: 0 3px 3px 0;
+          -webkit-border-radius: 0 3px 3px 0;
+          border-radius: 0 3px 3px 0;      
+          text-shadow: 0 -1px 0 rgba(0, 0 ,0, .3);
+      }   
+      
+      .form-wrapper button:hover{		
+          background: #e54040;
+      }	
+      
+      .form-wrapper button:active,
+      .form-wrapper button:focus{   
+          background: #c42f2f;    
+      }
+    
+      .form-wrapper button:before {
+          content: '';
+          position: absolute;
+          border-width: 8px 8px 8px 0;
+          border-style: solid solid solid none;
+          border-color: transparent #d83c3c transparent;
+          top: 12px;
+          left: -6px;
+      }
+    
+      .form-wrapper button:hover:before{
+          border-right-color: #e54040;
+      }
+    
+      .form-wrapper button:focus:before{
+          border-right-color: #c42f2f;
+      }    
+    
+      .form-wrapper button::-moz-focus-inner {
+          border: 0;
+          padding: 0;
+      }
+	  
+	  
+	  
+	  /* SETUP */
+      .chartlist a { 
+          color: #2D7BB2; 
+          text-decoration: none; 
+          font-weight: bold; 
+      }
+      .chartlist a:hover { 
+          color: #333; 
+      }
+
+      /* CHART LISTS */
+      .chartlist {
+		  margin: 0px auto 0px auto;
+          border-top: 1px solid #EEE; 
+          width: 600px;
+      }
+      .chartlist li { 
+          position: relative;
+          display: block;  
+          border-bottom: 1px solid #EEE; 
+          _zoom: 1;
+      }
+      .chartlist li a { 
+          display: block; 
+          padding: 0.4em 4.5em 0.4em 0.5em;
+          position: relative; 
+          z-index: 2; 
+      }
+      .chartlist .count { 
+          display: block; 
+          position: absolute; 
+          top: 0; 
+          right: 0; 
+          margin: 0 0.3em; 
+          text-align: right; 
+          color: #999; 
+          font-weight: bold; 
+          font-size: 0.875em; 
+          line-height: 2em;
+          z-index: 999;
+      }
+      .chartlist .index { 
+          display: block; 
+          position: absolute; 
+          top: 0; 
+          left: 0; 
+          height: 100%; 
+          background: #B8E4F5; 
+          text-indent: -9999px; 
+          overflow: hidden; 
+          line-height: 2em;
+      }
+      .chartlist li:hover { 
+          background: #EFEFEF; 
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1><a href="/">飯糰🍙</a> / 「<%= @word %>」</h1>
+    </header>
+	<form class="form-wrapper cf" action="/chart">
+		<input type="text" placeholder="試試「@[^S].*?(?=[，。（）「」\s])」或者「::people::」" name="word" required>
+		<button type="submit">Search</button>
+	</form>
+	
+	
+	
+	
+<% unless @word.nil?
+	pattern = CGI.unescape(@word.gsub('+', '::plus::')).gsub(/\s/, '').gsub('::plus::', '+')
+	puts @word
+	puts "search: #{pattern}"
+	pattern = /@[^S].*?(?=[，。（）「」\s])/ if @word == "::people::"
+	
+	hash = Hash.new(0)
+	total = 0
+	
+	@conversations.each do |items|
+	  items.each do |k|
+	    @statuses_pool[k]["text"].scan(/#{pattern}/i).each do |m|
+		  hash[m] += 1
+		  total += 1
+		end
+	  end
+	end
+
+	pp hash
+	p total
+	%>
+
+	<h1 style="text-align: center; margin-bottom: 30px;">
+		<%
+		  if hash.keys.size > 0
+		    %>共有 <%= hash.keys.size %> 個「<%= @word%>」條目😏
+			<%
+		  else
+		    %>沒有任何關於「<%= @word%>」的發現☹️
+			<%
+		  end
+		%>
+	</h1>
+
+	<div class="section">
+	  <ul class="chartlist">
+
+	    <%
+		  hash.sort { |l, r| r[1]<=>l[1] }.each do |e|
+		    pp e
+		%>
+  	        <li>
+  	          <a href="/search?word=<%= CGI.escape(e[0]) %>"><%= e[0] %></a> 
+  	          <span class="count"><%= e[1] %></span>
+  	          <span class="index" style="width: <%= 100 * e[1] / total %>%">(<%= 100 * e[1] / total %>%)</span>
+  	        </li>
+		<%
+		  end
+		%>		
+
+	    </ul>
+    </div>
+	
+<% end %>
+	
+
+    <footer>
+      <a href="mailto:yx.pu@live.com">yx.pu@live.com</a>
+      <p>&copy; 抄襲自 Alexis Sellier</p>
+    </footer>
+  </body>
+</html>
+

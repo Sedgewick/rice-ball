@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" type="text/css" href="/css/base.css">
+	<link rel="stylesheet" href="css/style.css">
+    <title>Sedgewick 的豆瓣讀書</title>
+    <style>
+      body {
+        padding: 10px;
+        font-size: 14px;
+		max-width: 1180px;
+      }
+
+      h1 {
+        font-size: 16px;
+		margin: 0px 50px;
+      }
+
+      h2 {
+        font-size: 20px;
+        text-decoration: underline;
+      }
+
+      h3 {
+        font-size: 20px;
+      }
+
+      section > header {
+        margin-bottom: 10px;
+      }
+
+      section > header > h2 {
+        font-size: 20px;
+      }
+
+      ul {
+        list-style-position: inside;
+        margin: 10px 0;
+	    background-color: #fafafa;
+	    border: 1px solid #ccc;
+	    border-radius: 4px;
+	    padding: 10px;
+      }
+	  
+      li {
+        list-style-position: inside;
+        margin: 5px 0;
+      }
+	  
+	  li a {
+	    color: #999;
+        font-size: smaller;
+	  }
+
+      section p {
+        margin: 15px 0 30px 0;
+      }
+
+      ul:hover {
+        background-color: #fbf9e6;
+      }
+	  
+	  a {
+		color: white;
+	  }
+	  
+	  td.title {
+		width: 20%;
+	  }
+	  
+	  div.original-title {
+		font-size: 8px;
+		margin-top: 5px;
+	  }
+	  
+	  td.authors {
+		width: 16%;
+		font-size: 10px;
+	  }
+	  
+	  td.my-rate {
+		width: 10%;
+	  }
+	  
+	  td.rating {
+		text-align: center;
+		width: 8%;
+	  }
+	  
+	  td.votes {
+		text-align: right;
+		width: 8%;
+	  }
+	  
+	  td.pages {
+		text-align: center;
+		width: 8%;
+	  }
+	  
+	  td.watched-time {
+		text-align: center;
+		width: 10%;
+	  }
+	  
+	  td.published-date {
+		width: 10%;
+	  	font-size: 12px;
+	  }
+	  
+	  td.price {
+		width: 10%;
+	  }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1><a href="/">飯糰🍙</a> / Sedgewick 的豆瓣讀書</h1>
+    </header>
+    
+	
+	  <section>
+	  <!--for demo wrap-->
+	  <!-- <h1>Fixed Table header</h1> -->
+	  <div class="tbl-header">
+	    <table cellpadding="0" cellspacing="0" border="0">
+	      <thead>
+	        <tr>
+	          <th style="width: 20%">Title</th>
+			  <th style="width: 16%">Authors</th>
+	          <th style="width: 10%">My Rate</th>
+			  <th style="width: 8%; text-align: center;">Rating</th>
+			  <th style="width: 8%; text-align: right;">Votes</th>
+			  <th style="width: 8%; text-align: center;">Pages</th>
+	          <th style="width: 10%">Watched Date</th>
+			  <th style="width: 10%">Published Date</th>
+			  <th style="width: 10%">Price</th>
+	        </tr>
+	      </thead>
+	    </table>
+	  </div>
+	  <div class="tbl-content">
+	    <table cellpadding="0" cellspacing="0" border="0">
+	      <tbody>
+			  
+<%
+require 'nokogiri'
+
+b = Time.now
+
+db = SQLite3::Database.open(Dir.pwd + "/data/douban.db")
+
+books = {}
+db.execute("select * from book_list") do |row|
+  id, title, my_rate, watched_date = row
+  
+  books[id] = {
+				:title => title,
+				:my_rate => my_rate,
+				:watched_date => watched_date
+	  		  }
+end
+
+db.execute("select * from book_details") do |row|
+  id, rating_num, votes, authors, publishing_house, original_title, subtitle, translator, published_date, pages, price, isbn, series = row
+  
+  books[id][:rating_num] = rating_num
+  books[id][:votes] = votes
+  books[id][:authors] = authors
+  books[id][:publishing_house] = publishing_house
+  books[id][:original_title] = original_title
+  books[id][:subtitle] = subtitle
+  books[id][:translator] = translator
+  books[id][:published_date] = published_date
+  books[id][:pages] = pages
+  books[id][:price] = price
+  books[id][:isbn] = isbn
+  books[id][:series] = series
+end
+
+db.close
+
+books.each do |id, details|
+%>
+  
+  <tr>
+	  <td class="title">
+		  <a href="https://book.douban.com/subject/<%= id %>/">
+			  <%= books[id][:title] %>
+			  <%
+			  unless books[id][:original_title].nil? %>
+			    <br />
+			    <div class="original-title">
+			    	<%= books[id][:original_title] %>
+			    </div>
+			  <%
+			  end
+			  %>
+		  </a>
+	  </td>
+	  <td class="authors"><%= (books[id][:authors] || "").gsub(/\s*\/\s*/, '<br />') %></td>
+	  <td class="my-rate"><%= books[id][:my_rate] %></td>
+	  <td class="rating"><%= books[id][:rating_num] %></td>
+	  <td class="votes"><%= books[id][:votes] || "" %></td>
+	  <td class="pages"><%= (books[id][:pages] || "").gsub(/[页頁]/, '') %></td>
+	  <td class="watched-time"><%= books[id][:watched_date] %></td>
+	  <td class="published-date"><%= books[id][:published_date] || "" %></td>
+	  <td class="price"><%= books[id][:price] || "" %></td>
+  </tr>
+
+<%
+end
+
+e = Time.now
+puts "grab douban books in #{e - b} sec."
+
+%>
+
+	      </tbody>
+	    </table>
+	  </div>
+	</section>
+
+
+	<!-- follow me template -->
+	<div class="made-with-love">
+	  Made with
+	  <i>♥</i> by
+	  <a target="_blank" href="https://codepen.io/nikhil8krishnan">Nikhil Krishnan</a>
+	</div>
+	
+    <footer>
+      <a href="mailto:yx.pu@live.com">yx.pu@live.com</a>
+      <p>&copy; 抄襲自 Alexis Sellier</p>
+    </footer>
+  </body>
+</html>
+

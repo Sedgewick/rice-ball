@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" type="text/css" href="/css/base.css">
+	<link rel="stylesheet" href="css/style.css">
+    <title>Sedgewick 的豆瓣電影</title>
+    <style>
+      body {
+        padding: 10px;
+        font-size: 14px;
+		max-width: 1180px;
+      }
+
+      h1 {
+        font-size: 16px;
+		margin: 0px 50px;
+      }
+
+      h2 {
+        font-size: 20px;
+        text-decoration: underline;
+      }
+
+      h3 {
+        font-size: 20px;
+      }
+
+      section > header {
+        margin-bottom: 10px;
+      }
+
+      section > header > h2 {
+        font-size: 20px;
+      }
+
+      ul {
+        list-style-position: inside;
+        margin: 10px 0;
+	    background-color: #fafafa;
+	    border: 1px solid #ccc;
+	    border-radius: 4px;
+	    padding: 10px;
+      }
+	  
+      li {
+        list-style-position: inside;
+        margin: 5px 0;
+      }
+	  
+	  li a {
+	    color: #999;
+        font-size: smaller;
+	  }
+
+      section p {
+        margin: 15px 0 30px 0;
+      }
+
+      ul:hover {
+        background-color: #fbf9e6;
+      }
+	  
+	  a {
+		color: white;
+	  }
+	  
+	  td.title {
+		width: 20%;
+	  }
+	  
+	  div.original-title {
+		font-size: 10px;
+	  }
+	  
+	  td.my-rating {
+		width: 10%;
+	  }
+	  
+	  td.rating {
+		text-align: center;
+		width: 8%;
+	  }
+	  
+	  td.watched-time {
+		text-align: center;
+		width: 12%;
+	  }
+	  
+	  td.release-date {
+		width: 15%;
+	  	font-size: 10px;
+	  }
+	  
+	  td.episodes {
+		text-align: center;
+		width: 10%;
+	  }
+	  
+	  td.duration {
+		text-align: center;
+		width: 10%;
+	  }
+	  
+	  td.director {
+		width: 15%;
+    	font-size: 10px;
+	  }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1><a href="/">飯糰🍙</a> / Sedgewick 的豆瓣電影</h1>
+    </header>
+    
+	
+	  <section>
+	  <!--for demo wrap-->
+	  <!-- <h1>Fixed Table header</h1> -->
+	  <div class="tbl-header">
+	    <table cellpadding="0" cellspacing="0" border="0">
+	      <thead>
+	        <tr>
+	          <th style="width: 20%">Title</th>
+	          <th style="width: 10%">My Rating</th>
+			  <th style="width: 8%; text-align: center;">Rating</th>
+	          <th style="width: 12%; text-align: center;">Watched Date</th>
+			  <th style="width: 15%">Release Date</th>
+			  <th style="width: 10%;text-align: center;">Episodes</th>
+			  <th style="width: 10%;text-align: center;">Duration</th>
+			  <th style="width: 15%">Director</th>
+	        </tr>
+	      </thead>
+	    </table>
+	  </div>
+	  <div class="tbl-content">
+	    <table cellpadding="0" cellspacing="0" border="0">
+	      <tbody>
+			  
+<%
+require 'nokogiri'
+require 'csv'
+
+b = Time.now
+
+db = SQLite3::Database.open(Dir.pwd + "/data/douban.db")
+
+movies = {}
+db.execute("select * from movies_list") do |row|
+  id, title, original_title, my_rating, watched_date = row
+  
+  movies[id] = {
+				:title => title,
+				:original_title => original_title,
+				:my_rating => my_rating,
+				:watched_date => watched_date
+	  		  }
+end
+
+db.execute("select * from movies_details") do |row|
+  id, director, published_date, episodes, duration, rating = row
+  
+  movies[id][:director] = director
+  movies[id][:published_date] = published_date
+  movies[id][:episodes] = episodes
+  movies[id][:duration] = duration
+  movies[id][:rating] = rating
+end
+
+db.close
+
+movies.each do |id, details| %>
+  
+  <tr>
+	  <td class="title">
+		  <a href="https://movie.douban.com/subject/<%= id %>/"><%= movies[id][:title] %></a>
+		  <br />
+		  <div class="original-title"><%= movies[id][:original_title] %></div>
+	  </td>
+	  <td class="my-rating"><%= movies[id][:my_rating] %></td>
+	  <td class="rating"><%= movies[id][:rating] %></td>
+	  <td class="watched-time"><%= movies[id][:watched_date] %></td>
+	  <td class="release-date"><%= movies[id][:published_date].gsub('|', '<br />') %></td>
+	  <td class="episodes"><%= movies[id][:episodes] %></td>
+	  <td class="duration"><%= movies[id][:duration] %></td>
+	  <td class="director"><%= movies[id][:director].gsub('|', '<br />') %></td>
+  </tr>
+
+<% end
+
+# doc = Nokogiri::HTML(open('https://movie.douban.com/people/Sedgewick/collect?start=0&sort=time&rating=all&filter=all&mode=list'))
+# $total = doc.css('span.subject-num').first.content.scan(/\d+/)[2].to_i
+#
+# def update_info(stop_id)
+#   stop_now = false
+#   new_watched_movies = []
+#
+#   ($total / 30.0).ceil.times.each do |p|
+#     break if stop_now
+#
+#     # sleep(5) if p % 10 == 0
+#     doc = Nokogiri::HTML(open("https://movie.douban.com/people/Sedgewick/collect?start=#{30*p}&sort=time&rating=all&filter=all&mode=list"))
+#
+#     doc.css('div.item-show').each do |link|
+#     a = link.css('div.title a')
+#     id = a.first['href'].scan(/\d+/).first
+#
+#     if id == stop_id
+#       stop_now = true
+#     break  # 這裏可以用 catch... throw... 改寫！
+#     end
+#
+#     title = a.first.content.gsub(/^\s*|\n/, '').split(/\s+\/\s+/)
+#
+#       begin
+#         rating = '★' * link.css('div.date span').first['class'][6].to_i
+#       rescue => e
+#         case e
+#         when NoMethodError
+#           puts "ERROR"
+#           rating = nil
+#         else
+#           raise e
+#         end
+#       end
+#
+#       movie = [
+#                 id,
+#         title.first,
+#                 title[1],
+#                 rating,
+#                 Date.parse(link.css('div.date').first.content).to_s
+#               ]
+#
+#       new_watched_movies << movie
+#     end
+#
+#     puts "grabing page #{p}. grabed #{new_watched_movies.size} items."
+#   end
+#   new_watched_movies
+# end
+#
+# def get_more(id)
+#   url = "https://movie.douban.com/subject/#{id}/"
+#   begin
+#     doc = Nokogiri::HTML(open(url))
+#   rescue => e
+#     case e
+#     when OpenURI::HTTPError
+#       return [id, "", "", "", ""]
+#     else
+#       raise e
+#     end
+#   end
+#
+#   director = []
+#   begin
+#     doc.css("#info span a[rel='v:directedBy']").each do |d|
+#       director << d.text
+#     end
+#   rescue =>e
+#     director = ""
+#   end
+#
+#   release_date = []
+#   doc.css("#info span[property='v:initialReleaseDate']").each do |date|
+#     release_date << date.content
+#   end
+#
+#   begin
+#     duration = doc.css("#info span[property='v:runtime']").first['content']
+#   rescue => e
+#     case e
+#     when NoMethodError
+#       puts "ERROR!"
+#       span = doc.css("#info").to_html.gsub(/<[^>]+?>/, ' ')
+#       m = span.scan(/集数:\s*(\d+)/)
+#       if m.empty?
+#         seasons = "1"
+#       else
+#         seasons = m.first.first
+#       end
+#
+#       m = span.scan(/片长:\s*(\d+)/)
+#       if m.empty?
+#         time = ""
+#       else
+#         time = m.first.first
+#       end
+#
+#       p
+#       duration = seasons + "×" + time
+#     else
+#       raise e
+#     end
+#   end
+#
+#   m = doc.css("strong.rating_num")
+#   if m.empty?
+#     rating_num = ""
+#   else
+#     rating_num = m.first.content
+#   end
+#
+#   # pp [id, director.join('|'), release_date.join('|'), duration, rating_num]
+#
+#   [id, director.join('|'), release_date.join('|'), duration, rating_num]
+# end
+#
+# if $total > movies.size
+#   puts "UPDATE movies.csv!"
+#   updated_movies = update_info(movies.first.first)
+#
+#   CSV.open("./movies.csv", "wb") do |csv|
+#     (updated_movies + movies).each do |m|
+#       csv << m
+#     end
+#   end
+#
+#   puts "UPDATE movies.csv!"
+#
+#   updated_ids = []
+#   updated_movies.each { |row| updated_ids << row.first }
+#
+#   updated_movies_info = []
+#   updated_ids.each { |id| updated_movies_info << get_more(id) }
+#
+#   CSV.open("./movies_info.csv", "wb") do |csv|
+#     (updated_movies_info + movies_info).each do |row|
+#       csv << row
+#     end
+#   end
+# end
+
+e = Time.now
+puts "grab douban movies in #{e - b} sec."
+
+%>
+
+	      </tbody>
+	    </table>
+	  </div>
+	</section>
+
+
+	<!-- follow me template -->
+	<div class="made-with-love">
+	  Made with
+	  <i>♥</i> by
+	  <a target="_blank" href="https://codepen.io/nikhil8krishnan">Nikhil Krishnan</a>
+	</div>
+	
+    <footer>
+      <a href="mailto:yx.pu@live.com">yx.pu@live.com</a>
+      <p>&copy; 抄襲自 Alexis Sellier</p>
+    </footer>
+  </body>
+</html>
+

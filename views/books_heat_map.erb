@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" type="text/css" href="/css/base.css">
+    <title>Sedgewick 的飯否</title>
+    <style>
+      body {
+        padding: 10px;
+        font-size: 14px;
+      }
+
+      h1 {
+        font-size: 16px;
+      }
+
+      h2 {
+        font-size: 20px;
+        text-decoration: underline;
+      }
+
+      h3 {
+        font-size: 20px;
+      }
+
+      section > header {
+        margin-bottom: 10px;
+      }
+
+      section > header > h2 {
+        font-size: 20px;
+      }
+
+      section p {
+        margin: 15px 0 30px 0;
+      }
+	  
+	  .calendar-graph {
+		width: 664px;
+		margin: 10px auto;
+	    padding: 20px;
+		padding-bottom: 40px;
+	    border-radius: 3px;
+		border: 1px #e1e4e8 solid;
+	  }
+	  
+	  .text-gray {
+	    color: #586069;
+	  }
+	  
+	  .legend {
+	    width: 704px;
+		text-align: right;
+		margin: 10px auto 0px auto;
+		font-size: 11px;
+		fill: #767676;
+	  }
+	  
+	  text.year {
+	    font-size: 13px;
+  	    fill: #767676;
+	  }
+	  
+	  text.month {
+	    font-size: 10px;
+  	    fill: #767676;
+	  }
+	  
+	  text.wday {
+	    font-size: 9px;
+	    fill: #767676;
+	  }
+    </style>
+  </head>
+  <body>
+    <section>
+	<%
+	    require 'date'
+		require 'csv'
+		
+		year = Date.today.year
+		
+		colors = {
+					0 => "#eee",
+					1 => "#e1fab0",
+					2 => "#c6e48b",
+					3 => "#7bc96f",
+					4 => "#239a3b",
+					5 => "#196127",
+					6 => "#0a4616"
+				 }
+		colors.default = "pink" # means ERROR!!!
+	%>
+	
+	<div class="legend">
+		<h1><a href="/">飯糰🍙</a> / 2009~<%= year %> 年 Sedgewick 的開卷之旅</h1>
+		<br />
+		<br />
+		<svg width="704" height="11">
+			<g>
+				<text text-anchor="start" class="legend" dx="0" dy="9">0</text>
+				<%
+				  colors.each do |k, c| %>
+				    <rect width="10" height="10" x="<%= 14 + 12 * k %>" y="0" fill="<%= c %>"></rect>
+				  <% end
+				%>
+				<text text-anchor="start" class="legend" dx="104" dy="9">6</text>
+			</g>
+		</svg>
+	</div>
+	
+	<%
+		watched_books_date = []
+		CSV.read("./data/books.csv").each do |row|
+			watched_books_date << Date.parse(row[-1])
+		end
+		
+		(2009..year).reverse_each do |y|
+		
+			nights = Array.new(367, 0)	# the stayed up nights
+			
+			watched_books_date.each do |d|
+				nights[d.yday] += 1 if d.year == y
+			end
+			
+			%>
+			
+			<div class="calendar-graph">
+		  	<svg width="664" height="125">
+			  <g>
+			  <text x="0" y="11" class="year"><%= y %>年讀書<%= nights.reduce(:+) %>本</text>
+		  	  <g transform="translate(16, 40)">
+				
+		  		<%
+				  weekday = {
+					  			0 => 7,
+								1 => 1,
+								2 => 2,
+								3 => 3,
+								4 => 4,
+								5 => 5,
+								6 => 6
+							}
+				  the_first_day = Date.parse("#{y}-01-01")
+		  
+		  	      54.times do |w| %>
+		  		    <g transform="translate(<%= 13 * w %>, 0)">
+		  			  <%
+		  			    7.times do |d|
+				  
+						  the_last_day = the_first_day + (7 * w + d)
+						  # pp "the #{7 * w + d + 1} night: #{nights[7 * w + d + 1]}"
+				  
+						  next if w < 1 and d < (weekday[the_first_day.wday] - 1)
+		  				  break if ( the_last_day <=> Date.parse("#{y}-12-31") ) > 0 %>
+				  
+		  				  <rect class="day" width="10" height="10" x="<%= 13 - w %>" y="<%= 12 * d %>" fill="<%= colors[nights[7 * w + d + 1]] %>" data-count="<%= nights[7 * w + d + 1] %>" data-date="<%= the_last_day.to_s %>"></rect>
+						  
+		  				<% end
+		  			  %>
+		  			</g>
+		  		  <% end
+		  		%>
+		
+		
+				<%
+				  month = {
+					  		 1 => "Jan",
+							 2 => "Feb",
+							 3 => "Mar",
+							 4 => "Apr",
+							 5 => "May",
+							 6 => "Jun",
+							 7 => "Jul",
+							 8 => "Aug",
+							 9 => "Sep",
+							 10 => "Oct",
+							 11 => "Nov",
+							 12 => "Dec"
+				  		  }
+				  the_base_day = the_first_day - weekday[the_first_day.wday] + 1
+				  53.times do |w|
+				    if (the_base_day + 7 * w).month != (the_base_day + 7 * (w - 1)).month %>
+					  <text x="<%= 13 + 12 * w %>" y="-10" class="month"><%= month[(the_base_day + 7 * w).month] %></text>
+					<% end
+				  end
+				%>
+		
+			    <text text-anchor="start" class="wday" dx="-14" dy="8">Mon</text>
+			    <text text-anchor="start" class="wday" dx="-14" dy="20" style="display: none;">Tue</text>
+			    <text text-anchor="start" class="wday" dx="-14" dy="32">Wed</text>
+			    <text text-anchor="start" class="wday" dx="-14" dy="44" style="display: none;">Thu</text>
+			    <text text-anchor="start" class="wday" dx="-14" dy="57">Fri</text>
+			    <text text-anchor="start" class="wday" dx="-14" dy="69" style="display: none;">Sat</text>
+				<text text-anchor="start" class="wday" dx="-14" dy="81">Sun</text>
+		
+				
+		
+		  	  </g>
+			  </g>
+		  	</svg>    
+			</div>
+			
+		<% end
+	%>
+
+	
+
+    </section>
+    <footer>
+      <a href="mailto:yx.pu@live.com">yx.pu@live.com</a>
+      <p>&copy; 抄襲自 Alexis Sellier</p>
+    </footer>
+  </body>
+</html>
+

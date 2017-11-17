@@ -1,0 +1,172 @@
+require 'open-uri'
+require 'kramdown'
+require 'sinatra'
+require "time"
+require 'erb'
+require 'json'
+require "pp"
+require_relative 'lib/fanfou.rb'
+
+class String
+  def to_markdown
+     self.gsub(/<code>(.+?)<\/code>/) { "`#{$1}`" }
+         .gsub(/<sup>.+?\[(\d+)\]<\/a><\/sup>/) { "[^fn#{$1}]" }
+         .gsub(/<h(\d)>(.+?)<\/h\1>/) { '#' * $1.to_i + ' ' + $2 }
+         .gsub(/<em>(.+?)<\/em>/) { "**#{$1}**" }
+         .gsub(/<hr>/, '----')
+         .gsub(/<li>\n?(.+?)<\/li>/m) { "- #{$1}\n"}
+         .gsub(/<\/?ol>/, '')
+         .gsub(/<pre><code>(.+?)<\/code><\/pre>/m) { "\n#{$1.gsub(/^/, '    ')}" }
+         .gsub(/<img src="(.+?)"\s+alt="(.+?)">/) { "![#{$2}](http:#{$1})"}
+         .gsub(/<div class="image-caption">.+?<\/div>/, '')
+         .gsub(/<div.+?>|<\/div>|<br>|<\/?ul>/, '')
+         .gsub(/<a href="(.+?)".+?>(.+?)<\/a>/) { "[#{$2}](#{$1})" }
+         .gsub(/\s*<p>|<\/p>/, '')
+         .gsub('&lt;', '<')
+         .gsub('&gt;', '>')
+         .gsub(/-(.+)\[↩\]\(#fnref(\d+)\)/) { "[^fn#{$2}]: #{$1}" }
+  end
+end
+
+configure do
+  (start = Time.now) && (ff = FanFou.new) && (puts "Started: #{Time.now - start} sec.")
+  set :ff => ff
+  set :conversations => ff.conversations
+  set :statuses_pool => ff.statuses_pool
+end
+
+
+get '/' do
+  erb :index
+end
+
+get '/code' do
+  url = "http://api.fanfou.com/statuses/user_timeline.json?id=Sedgewick"
+  @statuses = JSON.parse(open(url).read)
+  
+  erb :code
+end
+
+get '/fanfou' do
+  settings.ff.update_database
+  settings.ff.gen_conversations
+  @conversations = settings.conversations
+  @statuses_pool = settings.statuses_pool
+  
+  erb :fanfou
+end
+
+get '/log' do
+  markdown :log, :layout_engine => :erb
+end
+
+get '/ideas' do
+  @conversations = settings.conversations
+  @statuses_pool = settings.statuses_pool
+  erb :ideas
+end
+
+get '/niu' do
+  @conversations = settings.conversations
+  @statuses_pool = settings.statuses_pool
+  erb :niu
+end
+
+get '/nimr' do
+  @conversations = settings.conversations
+  @statuses_pool = settings.statuses_pool
+  erb :nimr
+end
+
+get '/search' do
+  @conversations = settings.conversations
+  @statuses_pool = settings.statuses_pool
+  
+  @word = params[:word]
+  erb :search
+end
+
+get '/chart' do
+  @conversations = settings.conversations
+  @statuses_pool = settings.statuses_pool
+  
+  @word = params[:word]
+  erb :chart
+end
+
+get '/sleep' do
+  @conversations = settings.conversations
+  @statuses_pool = settings.statuses_pool
+  
+  @year = params[:year]
+  erb :sleep
+end
+
+get '/calendar' do
+  @conversations = settings.conversations
+  @statuses_pool = settings.statuses_pool
+  
+  erb :calendar
+end
+
+get '/stat' do
+  @conversations = settings.conversations
+  @statuses_pool = settings.statuses_pool
+  
+  @word = params[:word]
+  erb :stat
+end
+
+get '/book' do
+  @conversations = settings.conversations
+  @statuses_pool = settings.statuses_pool
+  
+  erb :book
+end
+
+get '/movies' do
+  erb :movies
+end
+
+get '/movies_heat_map' do
+  erb :movies_heat_map
+end
+
+get '/books' do
+  erb :books
+end
+
+get '/books_heat_map' do
+  erb :books_heat_map
+end
+
+get '/search_blog' do
+  @word = params[:word]
+  erb :search_blog
+end
+
+get '/search_all' do
+  @word = params[:word]
+  @conversations = settings.conversations
+  @statuses_pool = settings.statuses_pool
+  
+  erb :search_all
+end
+
+get '/code/:topic' do
+  markdown :"/code/#{params['topic']}" # 必須在 /views 目錄下？！
+end
+
+get '/search_code' do
+  @word = params[:word]
+  
+  erb :search_code
+end
+
+get '/search_all_by_time' do
+  @word = params[:word]
+  @conversations = settings.conversations
+  @statuses_pool = settings.statuses_pool
+  
+  erb :search_all_by_time
+end
