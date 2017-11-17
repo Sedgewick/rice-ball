@@ -187,149 +187,140 @@ movies.each do |id, details| %>
 
 <% end
 
-# doc = Nokogiri::HTML(open('https://movie.douban.com/people/Sedgewick/collect?start=0&sort=time&rating=all&filter=all&mode=list'))
-# $total = doc.css('span.subject-num').first.content.scan(/\d+/)[2].to_i
-#
-# def update_info(stop_id)
-#   stop_now = false
-#   new_watched_movies = []
-#
-#   ($total / 30.0).ceil.times.each do |p|
-#     break if stop_now
-#
-#     # sleep(5) if p % 10 == 0
-#     doc = Nokogiri::HTML(open("https://movie.douban.com/people/Sedgewick/collect?start=#{30*p}&sort=time&rating=all&filter=all&mode=list"))
-#
-#     doc.css('div.item-show').each do |link|
-#     a = link.css('div.title a')
-#     id = a.first['href'].scan(/\d+/).first
-#
-#     if id == stop_id
-#       stop_now = true
-#     break  # 這裏可以用 catch... throw... 改寫！
-#     end
-#
-#     title = a.first.content.gsub(/^\s*|\n/, '').split(/\s+\/\s+/)
-#
-#       begin
-#         rating = '★' * link.css('div.date span').first['class'][6].to_i
-#       rescue => e
-#         case e
-#         when NoMethodError
-#           puts "ERROR"
-#           rating = nil
-#         else
-#           raise e
-#         end
-#       end
-#
-#       movie = [
-#                 id,
-#         title.first,
-#                 title[1],
-#                 rating,
-#                 Date.parse(link.css('div.date').first.content).to_s
-#               ]
-#
-#       new_watched_movies << movie
-#     end
-#
-#     puts "grabing page #{p}. grabed #{new_watched_movies.size} items."
-#   end
-#   new_watched_movies
-# end
-#
-# def get_more(id)
-#   url = "https://movie.douban.com/subject/#{id}/"
-#   begin
-#     doc = Nokogiri::HTML(open(url))
-#   rescue => e
-#     case e
-#     when OpenURI::HTTPError
-#       return [id, "", "", "", ""]
-#     else
-#       raise e
-#     end
-#   end
-#
-#   director = []
-#   begin
-#     doc.css("#info span a[rel='v:directedBy']").each do |d|
-#       director << d.text
-#     end
-#   rescue =>e
-#     director = ""
-#   end
-#
-#   release_date = []
-#   doc.css("#info span[property='v:initialReleaseDate']").each do |date|
-#     release_date << date.content
-#   end
-#
-#   begin
-#     duration = doc.css("#info span[property='v:runtime']").first['content']
-#   rescue => e
-#     case e
-#     when NoMethodError
-#       puts "ERROR!"
-#       span = doc.css("#info").to_html.gsub(/<[^>]+?>/, ' ')
-#       m = span.scan(/集数:\s*(\d+)/)
-#       if m.empty?
-#         seasons = "1"
-#       else
-#         seasons = m.first.first
-#       end
-#
-#       m = span.scan(/片长:\s*(\d+)/)
-#       if m.empty?
-#         time = ""
-#       else
-#         time = m.first.first
-#       end
-#
-#       p
-#       duration = seasons + "×" + time
-#     else
-#       raise e
-#     end
-#   end
-#
-#   m = doc.css("strong.rating_num")
-#   if m.empty?
-#     rating_num = ""
-#   else
-#     rating_num = m.first.content
-#   end
-#
-#   # pp [id, director.join('|'), release_date.join('|'), duration, rating_num]
-#
-#   [id, director.join('|'), release_date.join('|'), duration, rating_num]
-# end
-#
-# if $total > movies.size
-#   puts "UPDATE movies.csv!"
-#   updated_movies = update_info(movies.first.first)
-#
-#   CSV.open("./movies.csv", "wb") do |csv|
-#     (updated_movies + movies).each do |m|
-#       csv << m
-#     end
-#   end
-#
-#   puts "UPDATE movies.csv!"
-#
-#   updated_ids = []
-#   updated_movies.each { |row| updated_ids << row.first }
-#
-#   updated_movies_info = []
-#   updated_ids.each { |id| updated_movies_info << get_more(id) }
-#
-#   CSV.open("./movies_info.csv", "wb") do |csv|
-#     (updated_movies_info + movies_info).each do |row|
-#       csv << row
-#     end
-#   end
-# end
+doc = Nokogiri::HTML(open('https://movie.douban.com/people/Sedgewick/collect?start=0&sort=time&rating=all&filter=all&mode=list'))
+total = doc.css('span.subject-num').first.content.scan(/\d+/)[2].to_i
+
+def get_details(id)
+  url = "https://movie.douban.com/subject/#{id}/"
+  begin
+    doc = Nokogiri::HTML(open(url))
+  rescue => e
+    case e
+    when OpenURI::HTTPError
+      return [id, "", "", "", ""]
+    else
+      raise e
+    end
+  end
+
+  director = []
+  begin
+    doc.css("#info span a[rel='v:directedBy']").each do |d|
+      director << d.text
+    end
+  rescue =>e
+    director = ""
+  end
+
+  release_date = []
+  doc.css("#info span[property='v:initialReleaseDate']").each do |date|
+    release_date << date.content
+  end
+
+  begin
+    seasons = nil
+    duration = doc.css("#info span[property='v:runtime']").first['content']
+  rescue => e
+    case e
+    when NoMethodError
+      puts "ERROR!"
+      span = doc.css("#info").to_html.gsub(/<[^>]+?>/, ' ')
+      m = span.scan(/集数:\s*(\d+)/)
+      if m.empty?
+        seasons = nil
+      else
+        seasons = m.first.first
+      end
+
+      m = span.scan(/片长:\s*(\d+)/)
+      if m.empty?
+        duration = nil
+      else
+        duration = m.first.first
+      end
+    else
+      raise e
+    end
+  end
+
+  m = doc.css("strong.rating_num")
+  if m.empty?
+    rating_num = ""
+  else
+    rating_num = m.first.content
+  end
+
+  [id, director.join('|'), release_date.join('|'), seasons, duration, rating_num]
+end
+
+db = SQLite3::Database.open(Dir.pwd + "/data/douban.db")
+ids = db.execute("select id from movies_list").flatten
+
+if total > ids.size
+  puts "UPDATE movies database!"
+  stop_now = false
+  new_watched_movies = []
+
+  (total / 30.0).ceil.times.each do |p|
+    break if stop_now
+
+    # sleep(5) if p % 10 == 0
+    doc = Nokogiri::HTML(open("https://movie.douban.com/people/Sedgewick/collect?start=#{30*p}&sort=time&rating=all&filter=all&mode=list"))
+
+    doc.css('div.item-show').each do |link|
+    a = link.css('div.title a')
+    id = a.first['href'].scan(/\d+/).first
+
+    if ids.include? id
+      stop_now = true
+      break  # 這裏可以用 catch... throw... 改寫！
+    end
+
+    title = a.first.content.gsub(/^\s*|\n/, '').split(/\s+\/\s+/)
+
+      begin
+        rating = '★' * link.css('div.date span').first['class'][6].to_i
+      rescue => e
+        case e
+        when NoMethodError
+          puts "ERROR"
+          rating = nil
+        else
+          raise e
+        end
+      end
+
+      movie = [
+                id,
+                title.first,
+                title[1],
+                rating,
+                Date.parse(link.css('div.date').first.content).to_s
+              ]
+
+      new_watched_movies << movie
+    end
+
+    puts "grabing page #{p}. grabed #{new_watched_movies.size} items."
+  end
+  
+  pp new_watched_movies
+  new_watched_movies.each do |m|
+    db.execute("insert into movies_list (id, title, original_title, my_rating, watched_date)
+                values (?, ?, ?, ?, ?)", m)
+  end
+  
+  updated_ids = []
+  new_watched_movies.each { |row| updated_ids << row.first }
+  
+  updated_ids.each do |id|
+    db.execute("insert into movies_details (id, director, publised_date, episodes, duration, rating)
+                values (?, ?, ?, ?, ?, ?)", get_details(id))
+  end
+  
+end
+
+db.close
 
 e = Time.now
 puts "grab douban movies in #{e - b} sec."
