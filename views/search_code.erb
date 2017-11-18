@@ -117,7 +117,7 @@
       }
     
       .form-wrapper input {
-          width: 480px;
+          width: 455px;
           height: 20px;
           padding: 10px 5px;
           float: left;    
@@ -160,7 +160,7 @@
           padding: 0;
           cursor: pointer;
           height: 40px;
-          width: 110px;
+          width: 135px;
           font: bold 15px/40px 'lucida sans', 'trebuchet MS', 'Tahoma';
           color: #fff;
           text-transform: uppercase;
@@ -209,6 +209,10 @@
 		  color: #908f8f;
 		  margin: 10px auto;
 	  }
+	  
+	  .tip div {
+	  	  margin: 3px auto;
+	  }
     </style>
   </head>
   <body>
@@ -217,12 +221,36 @@
     </header>
 	<form class="form-wrapper cf" action="/search_code">
 		<input type="text" placeholder="支持正則表達式的喔^_^" name="word" required>
-		<button type="submit">Search</button>
+		<button type="submit">Search Code</button>
 	</form>
 	
-<%
-
-
+	<%
+  	codes = []
+  	Dir.glob("./views/code/*.md").each do |md|
+  	  codes << {
+  		  		 :file_name => md,
+  				 :content => open(md).read
+  			   }
+  	end
+	
+	if @word.nil?
+	  	
+	%>
+		<div class="tip" style="width: 630px; text-align: left">「代碼庫」目錄：
+			<%
+			codes.sort_by{ |f| f[:file_name] }.each do |file|
+				pwd = file[:file_name].scan(/(?<=code)\/.*?(?=\.md)/).first
+				%>
+				<div>
+					<a href="<%= '/code' + pwd%>">
+						<%= '- ' + pwd %>
+					</a>
+				</div>
+			<%
+			end
+			%>
+		</div>
+	<% end
 
 unless @word.nil?
 	pattern = CGI.unescape(@word.gsub('+', '::plus::')).gsub(/\s/, '').gsub('::plus::', '+')
@@ -233,16 +261,6 @@ unless @word.nil?
 	
 	# search Code
 	
-	codes = []
-	Dir.glob("./views/code/*.md").each do |md|
-	  codes << {
-		  		 :file_name => md,
-				 :content => open(md).read
-			   }
-	end
-	
-	pp codes
-	
 	codes.each do |h|
 	  if h[:content].index(/#{pattern}/io)
 	    targets << {
@@ -252,7 +270,7 @@ unless @word.nil?
 	  end
 	end
 	
-	pp targets
+	targets
 	
 %>
 	
