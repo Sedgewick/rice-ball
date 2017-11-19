@@ -1,0 +1,118 @@
+<%
+require 'digest'
+
+db = SQLite3::Database.open(Dir.pwd + "/data/bookmarks.db")
+bookmarks = db.execute("SELECT * FROM bookmarks")
+ids = bookmarks.reduce([]) { |memo, e| memo << e.first }
+pp ids
+
+unless @u.nil?
+	puts "#{@u}, #{@tl}, #{@tm}"
+
+	# db.execute <<-SQL
+	#   create table bookmarks (
+	#     id varchar(32) PRIMARY KEY,
+	#     url text,
+	#     watched_time varchar(20)
+	#   );
+	# SQL
+
+	id = Digest::MD5.hexdigest(@u)
+
+	unless ids.include? id
+		db.execute("INSERT INTO bookmarks (id, url, watched_time, title)
+		            VALUES (?, ?, ?, ?)", [id, @u, Time.at(@tm).to_s], @tl)
+	end
+end
+
+db.close
+
+%>
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" type="text/css" href="/css/base.css">
+    <title>Sedgewick 的稍後讀</title>
+    <style>
+      body {
+        padding: 10px;
+        font-size: 14px;
+      }
+
+      h1 {
+        font-size: 16px;
+      }
+
+      h2 {
+        font-size: 20px;
+        text-decoration: underline;
+      }
+
+      h3 {
+        font-size: 20px;
+      }
+
+      section > header {
+        margin-bottom: 10px;
+      }
+
+      section > header > h2 {
+        font-size: 20px;
+      }
+
+      ul {
+        list-style-position: inside;
+        margin: 10px 0;
+	    background-color: #fafafa;
+	    border: 1px solid #ccc;
+	    border-radius: 4px;
+	    padding: 10px;
+      }
+	  
+      li {
+        list-style-position: inside;
+        margin: 5px 0;
+		color: #999;
+      }
+	  
+	  li a {
+		color: black;
+	  }
+
+      section p {
+        margin: 15px 0 30px 0;
+      }
+
+      ul:hover {
+        background-color: #fbf9e6;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1><a href="/">飯糰🍙</a> / 稍後讀</h1>
+    </header>
+    <section>
+      <br /> <br />
+      
+		
+	  <% bookmarks.each do |bm| %>
+		<ul>
+		  <li>
+            <a target="_blank" href="<%= bm[1] %>"><%= bm[3].scan(/(?<=\(Saved\)).+/).first %></a>
+			<br />
+			at <%= bm[2][0..-7] %>
+		  </li>
+		</ul>
+	  <% end %>
+		
+      
+    </section>
+    <footer>
+      <a href="mailto:yx.pu@live.com">yx.pu@live.com</a>
+      <p>&copy; 抄襲自 Alexis Sellier</p>
+    </footer>
+  </body>
+</html>
+
