@@ -8,18 +8,7 @@ ids = db.execute("SELECT id FROM bookmarks").flatten
 # pp ids
 
 unless @u.nil?
-	puts "#{@u}, #{@tl}, #{@tm}"
-
-	# db.execute <<-SQL
-	#   create table bookmarks (
-	#     id varchar(32) PRIMARY KEY,
-	#     url text,
-	#     watched_time varchar(20)
-	#   );
-	# SQL
-
 	id = Digest::MD5.hexdigest(@u)
-
 	unless ids.include? id
 		db.execute("INSERT INTO bookmarks (id, url, watched_time, title)
 		            VALUES (?, ?, ?, ?)", [id, @u, Time.at(@tm).to_s], @tl)
@@ -34,8 +23,6 @@ db.execute("SELECT * FROM bookmarks") do |row|
 							:title => row[3].gsub('(Saved)', '').gsub(/^\p{Z}*/, '')
 						}
 end
-
-# pp bookmarks
 
 db.close
 
@@ -127,7 +114,6 @@ db.close
     <section>
       <br /> <br />
       
-		
 	  <% bookmarks.each do |id, bm| %>
 		<ul>
 		  <li>
@@ -148,7 +134,6 @@ db.close
 		</ul>
 	  <% end %>
 		
-      
     </section>
     <footer>
       <a href="mailto:yx.pu@live.com">yx.pu@live.com</a>
