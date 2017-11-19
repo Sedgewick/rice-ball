@@ -2,8 +2,10 @@
 require 'digest'
 
 db = SQLite3::Database.open(Dir.pwd + "/data/bookmarks.db")
-bookmarks = db.execute("SELECT * FROM bookmarks")
-ids = bookmarks.reduce([]) { |memo, e| memo << e.first }
+
+
+ids = db.execute("SELECT id FROM bookmarks").flatten
+# pp ids
 
 unless @u.nil?
 	puts "#{@u}, #{@tl}, #{@tm}"
@@ -23,6 +25,17 @@ unless @u.nil?
 		            VALUES (?, ?, ?, ?)", [id, @u, Time.at(@tm).to_s], @tl)
 	end
 end
+
+bookmarks = {}
+db.execute("SELECT * FROM bookmarks") do |row|
+	bookmarks[row[0]] = {
+							:url => row[1],
+							:watched_time => row[2][0..-7],
+							:title => row[3].gsub('(Saved)', '').gsub(/^\p{Z}*/, '')
+						}
+end
+
+# pp bookmarks
 
 db.close
 
@@ -73,10 +86,12 @@ db.close
         list-style-position: inside;
         margin: 5px 0;
 		color: #999;
+		font-size: 12px;
       }
 	  
 	  li a {
 		color: black;
+		font-size: 15px;
 	  }
 
       section p {
@@ -86,6 +101,23 @@ db.close
       ul:hover {
         background-color: #fbf9e6;
       }
+	  
+	  
+	  .ipicon {
+	    transition: opacity 400ms cubic-bezier(.25,.46,.45,.94);
+	    background-image: url(./images/ipicons.png);
+	    background-repeat: no-repeat;
+	    display: inline-block;
+	    vertical-align: middle;
+		
+		
+	  }
+	  
+	  .ipicon-delete {
+  		width: 25px;
+  		height: 25px;
+  		background-position: -300px 0;
+	  }
     </style>
   </head>
   <body>
@@ -96,12 +128,22 @@ db.close
       <br /> <br />
       
 		
-	  <% bookmarks.each do |bm| %>
+	  <% bookmarks.each do |id, bm| %>
 		<ul>
 		  <li>
-            <a target="_blank" href="<%= bm[1] %>"><%= bm[3].scan(/(?<=\(Saved\)).+/).first %></a>
-			<br />
-			at <%= bm[2][0..-7] %>
+            <%= bm[:watched_time] %>
+		  </li>
+		  <li>
+			<a target="_blank" href="<%= bm[:url] %>">
+				<%= bm[:title] %>
+			</a>
+		  </li>
+		  <li>
+			<div class="article_actions">
+				<a title="Permanently Delete" data-article-id="<%= id %>" href="/read-it-later/delete?id=<%= id %>">
+					<span class="ipicon ipicon-delete"></span>
+				</a>
+			</div>	
 		  </li>
 		</ul>
 	  <% end %>

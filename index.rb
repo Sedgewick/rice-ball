@@ -178,3 +178,9 @@ get '/read-it-later' do
   
   erb :read_it_later
 end
+
+get '/read-it-later/delete' do
+  @id  = params['id']
+  
+  erb :read_it_later_delete
+end
