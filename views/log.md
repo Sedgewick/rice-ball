@@ -97,6 +97,7 @@ javascript:function iprl5()%7Bvar d%3Ddocument,z%3Dd.createElement(%27scr%27%2B%
 - 修復[/fanfou](/fanfou)刷新問題；
 - 把個人書評、影評抓下來，納入搜索；
 - 實現「&」搜索；
+- 把「稍後讀」納入搜索；
 
 <!-- 
 
