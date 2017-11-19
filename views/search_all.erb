@@ -72,6 +72,16 @@
   		box-shadow: 1px 1px 3px #9b8e02; 
 	  }
 	  
+	  .bookmark {
+  	    color: #999;
+        font-size: smaller;
+	  }
+	  
+	  .bookmark a {
+		font-size: 14px;
+		color: black;
+	  }
+	  
 	  
 	  
 	  
@@ -304,7 +314,7 @@ unless @word.nil?
 	    content += @statuses_pool[k]["text"]
 	  end
 
-	  targets << items if Regexp.new("#{pattern}", Regexp::IGNORECASE).match(content)
+	  targets << items if /#{pattern}/io =~ content
 	end
 	
 	
@@ -319,7 +329,7 @@ unless @word.nil?
 	matched_blogs = []
 	
 	blogs.each do |date, h|
-	  if h['html'].index Regexp.new("#{pattern}", Regexp::IGNORECASE)
+	  if h['html'].index /#{pattern}/io
 	    matched_blogs << {
 						    :url => h['url'],
 						    :title => h['title'],
@@ -330,6 +340,27 @@ unless @word.nil?
 	end
 	# pp matched_blogs
 	
+	
+	# Search Read It Later
+	
+	db = SQLite3::Database.open(Dir.pwd + "/data/bookmarks.db")
+	
+	bookmarks = {}
+	db.execute("SELECT * FROM bookmarks ORDER BY watched_time DESC") do |row|
+		bookmarks[row[0]] = {
+								:url => row[1],
+								:watched_time => row[2][0..-7],
+								:title => row[3].gsub('(Saved)', '').gsub(/^\p{Z}*/, '')
+							}
+	end
+	
+	matched_bookmark_ids = []
+	bookmarks.each do |id, details|
+	  matched_bookmark_ids << id if /#{pattern}/io =~ details[:title]
+	end
+
+	db.close
+	
 %>
 	
 	
@@ -338,18 +369,34 @@ unless @word.nil?
 		<%
 		  puts "fanfou: #{targets.size}"
 		  puts "blog: #{matched_blogs.size}"
-		  if targets.size > 0 and matched_blogs.size > 0
+		  if targets.size > 0 and matched_blogs.size > 0 and matched_bookmark_ids.size > 0
 		    %>
-			關於「<%= @word%>」，找到了 <%= targets.size %> 段飯嘮 & <%= matched_blogs.size %> 篇文章😏
+			關於「<%= @word%>」，找到了 <%= targets.size %> 段飯嘮、<%= matched_blogs.size %> 篇文章、<%= matched_bookmark_ids.size %> 個書籤😏
 			<%
-		  elsif targets.size == 0 and matched_blogs.size > 0
+		  elsif targets.size == 0 and matched_blogs.size > 0 and matched_bookmark_ids.size > 0
 		    %>
-			沒有任何關於「<%= @word %>」的飯嘮，但，找到了 <%= matched_blogs.size %> 篇文章😏
+			沒有任何關於「<%= @word %>」的飯嘮，但找到了 <%= matched_blogs.size %> 篇文章、<%= matched_bookmark_ids.size %> 個書籤😏
 			<%
-		  elsif targets.size > 0 and matched_blogs.size == 0
+		  elsif matched_blogs.size == 0 and targets.size > 0 and matched_bookmark_ids.size > 0
 		    %>
-			沒有任何關於「<%= @word %>」的文章，但，找到了 <%= targets.size %> 段飯嘮😏
+			沒有任何關於「<%= @word %>」的文章，但找到了 <%= targets.size %> 段飯嘮、<%= matched_bookmark_ids.size %> 個書籤😏
 			<%
+		  elsif matched_bookmark_ids.size == 0 and targets.size > 0 and matched_blogs.size > 0
+		    %>
+			沒有任何關於「<%= @word %>」的書籤，但找到了 <%= targets.size %> 段飯嘮、<%= matched_blogs.size %> 篇文章😏
+			<%
+		  elsif matched_blogs.size == 0 and matched_bookmark_ids.size == 0 and targets.size > 0
+		    %>
+			沒有任何關於「<%= @word %>」的文章或書籤，只找到了 <%= targets.size %> 段飯嘮😏
+			<%
+		  elsif targets.size == 0 and matched_bookmark_ids.size == 0 and matched_blogs.size > 0
+		    %>
+			沒有任何關於「<%= @word %>」的飯嘮或書籤，只找到了 <%= matched_blogs.size %> 篇文章😏
+			<%
+  		  elsif targets.size == 0 and matched_blogs.size == 0 and matched_bookmark_ids.size > 0
+  		    %>
+  			沒有任何關於「<%= @word %>」的飯嘮或文章，只找到了 <%= matched_bookmark_ids.size %> 個書籤😏
+  			<%
 		  else
 		    %>
 			沒有任何關於「<%= @word %>」的發現☹️
@@ -367,13 +414,15 @@ unless @word.nil?
     <section>
       <br /> <br />
 
-<% targets.each do |items| %>
+    <% targets.each do |items| %>
 	  <ul class="fanfou">
   
 	  <% items.each do |k| %>
 
 		<li>
-	      <a target="_blank" href="http://fanfou.com/statuses/<%= k %>?fr=viewreply"><%= Time.parse(@statuses_pool[k]["created_at"]).to_s[0..-7] %></a>
+	      <a target="_blank" href="http://fanfou.com/statuses/<%= k %>?fr=viewreply">
+			  <%= Time.parse(@statuses_pool[k]["created_at"]).to_s[0..-7] %>
+		  </a>
 		  - <%= @statuses_pool[k]["text"].gsub(/\n/, "<br />").gsub(/(#{pattern})/i, '<div class="tag">\1</div>') %>
 		  <br />
 		  <% unless @statuses_pool[k]["photo_url"].nil? %>
@@ -390,7 +439,6 @@ unless @word.nil?
 	<% end
 	
 	
-	
     matched_blogs.each do |h| %>
 	  	<ul class="blog">
 		  	  <a href="<%= h[:url] %>"><%= h[:title] + ' ' + h[:date] %></a>
@@ -404,6 +452,20 @@ unless @word.nil?
 	  	</ul>
 
     <% end
+	
+	
+	matched_bookmark_ids.each do |id| %>
+	  	<ul class="bookmark">
+			<li>
+			  BOOKMARK: <%= bookmarks[id][:watched_time] %>
+			  <br />
+		  	  <a href="<%= bookmarks[id][:url] %>">
+				  <%= bookmarks[id][:title].gsub(/(#{pattern})/i, '<div class="tag">\1</div>') %>
+			  </a>  
+			</li>
+	  	</ul>
+	<% end
+	
 end %>
 		
       
