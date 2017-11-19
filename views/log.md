@@ -86,7 +86,6 @@ javascript:function iprl5()%7Bvar d%3Ddocument,z%3Dd.createElement(%27scr%27%2B%
 
 ## **挖坑：**{: style="color: red"}
 
-- 拿到 Instapaper 的數據；
 - 將 [/fanfou](/fanfou) 改寫為流頁面；
 - 製作網站的移動版本；
 - 為小朋友的大作製作視差效果；
