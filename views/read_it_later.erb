@@ -4,7 +4,6 @@ require 'digest'
 db = SQLite3::Database.open(Dir.pwd + "/data/bookmarks.db")
 bookmarks = db.execute("SELECT * FROM bookmarks")
 ids = bookmarks.reduce([]) { |memo, e| memo << e.first }
-pp ids
 
 unless @u.nil?
 	puts "#{@u}, #{@tl}, #{@tm}"

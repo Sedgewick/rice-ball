@@ -29,6 +29,7 @@
 25. 十七號下午六點🕕，用 SQLite 改寫了「豆瓣電影」後端，但還不能實時更新。
 26. 十七號晚上九點🕘，同步到 [GitHub](https://github.com/Sedgewick/rice-ball) 上了。
 27. 十七號晚上十點半🕥，「豆瓣電影」現在可以自動更新了。
+28. 十九號下午四點半🕟，上線了「簡易稍後讀」。
 
 
 ----
@@ -63,8 +64,23 @@
 | 豆瓣電影         | [/movies](/movies)                   | 表格呈現看過的電影。  | 2017/11/11 |
 | 豆瓣讀書         | [/books](/books)                     | 表格呈現讀過的書。但還不能實時更新。  | 2017/11/12 |
 |-----------------+------------+-----------------+----------------|
+| 稍後讀         | [/read-it-later](/read-it-later)       | 點擊書籤，即可標記該網頁。  | 2017/11/19 |
+|-----------------+------------+-----------------+----------------|
 {: rules="groups"}
 
+> 注：書籤🔖內容為：
+>
+> - 本地測試版：
+>
+> ~~~javascript 
+> javascript:function iprl5()%7Bvar d%3Ddocument,z%3Dd.createElement(%27scr%27%2B%27ipt%27),b%3Dd.body,l%3Dd.location%3Btry%7Bif(!b)throw(0)%3Bd.title%3D%27(Saved) %27%2Bd.title%3Bz.setAttribute(%27src%27,%27http%3A%2F%2Flocalhost%3A4567%2Fread-it-later%3Fu%3D%27%2BencodeURIComponent(l.href)%2B%27%26tl%3D%27%2BencodeURIComponent(d.title)%2B%27%26tm%3D%27%2B%28new Date().getTime()))%3Bb.appendChild(z)%3B%7Dcatch(e)%7Balert(%27Please wait until the page has loaded.%27)%3B%7D%7Diprl5()%3Bvoid(0)
+> ~~~
+>
+> - 服務器版：
+>
+> ~~~javascript
+javascript:function iprl5()%7Bvar d%3Ddocument,z%3Dd.createElement(%27scr%27%2B%27ipt%27),b%3Dd.body,l%3Dd.location%3Btry%7Bif(!b)throw(0)%3Bd.title%3D%27(Saved) %27%2Bd.title%3Bz.setAttribute(%27src%27,%27http%3A%2F%2F39.108.95.90%3A4567%2Fread-it-later%3Fu%3D%27%2BencodeURIComponent(l.href)%2B%27%26tl%3D%27%2BencodeURIComponent(d.title)%2B%27%26tm%3D%27%2B%28new Date().getTime()))%3Bb.appendChild(z)%3B%7Dcatch(e)%7Balert(%27Please wait until the page has loaded.%27)%3B%7D%7Diprl5()%3Bvoid(0)
+> ~~~
 
 ----
 
