@@ -184,3 +184,9 @@ get '/read-it-later/delete' do
   
   erb :read_it_later_delete
 end
+
+get '/read-it-later/star-toggle' do
+  @id  = params['id']
+  
+  erb :read_it_later_star_toggle
+end

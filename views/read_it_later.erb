@@ -10,8 +10,8 @@ ids = db.execute("SELECT id FROM bookmarks").flatten
 unless @u.nil?
 	id = Digest::MD5.hexdigest(@u)
 	unless ids.include? id
-		db.execute("INSERT INTO bookmarks (id, url, watched_time, title)
-		            VALUES (?, ?, ?, ?)", [id, @u, Time.at(@tm).to_s], @tl)
+		db.execute("INSERT INTO bookmarks (id, url, watched_time, title, starred)
+		            VALUES (?, ?, ?, ?, ?)", [id, @u, Time.at(@tm).to_s, @tl, "false"])
 	end
 end
 
@@ -20,9 +20,12 @@ db.execute("SELECT * FROM bookmarks ORDER BY watched_time DESC") do |row|
 	bookmarks[row[0]] = {
 							:url => row[1],
 							:watched_time => row[2][0..-7],
-							:title => row[3].gsub('(Saved)', '').gsub(/^\p{Z}*/, '')
+							:title => row[3].gsub('(Saved)', '').gsub(/^\p{Z}*/, ''),
+							:starred => (row[4] == 'true')
 						}
 end
+
+pp bookmarks
 
 db.close
 
@@ -96,14 +99,35 @@ db.close
 	    background-repeat: no-repeat;
 	    display: inline-block;
 	    vertical-align: middle;
-		
+  		width: 25px;
+  		height: 25px;
 		
 	  }
 	  
 	  .ipicon-delete {
-  		width: 25px;
-  		height: 25px;
   		background-position: -300px 0;
+	  }
+	  
+	  .ipicon-liked-off {
+	    background-position: -719px 0;
+	  }
+	  
+	  a:hover .ipicon-liked-off {
+	    background-position: -769px 0;
+	  }
+	  
+	  .ipicon-liked-on {
+		background-position: -794px 0;
+		display: none;
+	  }
+	  
+	  .starred .ipicon-liked-on {
+	    
+		display: inline-block;
+	  }
+	  
+	  .starred .ipicon-liked-off {
+	    display: none;
 	  }
     </style>
   </head>
@@ -126,6 +150,10 @@ db.close
 		  </li>
 		  <li>
 			<div class="article_actions">
+				<a href="/read-it-later/star-toggle?id=<%= id %>" title="Like " class="action_link star_toggle <%= bm[:starred]? "starred" : "" %>">
+					<span class="ipicon ipicon-liked-on"></span>
+					<span class="ipicon ipicon-liked-off"></span>
+				</a>
 				<a title="Permanently Delete" data-article-id="<%= id %>" href="/read-it-later/delete?id=<%= id %>">
 					<span class="ipicon ipicon-delete"></span>
 				</a>

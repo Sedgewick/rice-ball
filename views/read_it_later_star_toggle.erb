@@ -1,0 +1,9 @@
+<%
+	db = SQLite3::Database.open(Dir.pwd + "/data/bookmarks.db")
+	star = db.execute("SELECT STARRED FROM bookmarks WHERE (ID = :id)", {"id" => @id}).first.first
+	toggle_star = (not (star == 'true'))
+	p toggle_star
+	db.execute("UPDATE bookmarks SET STARRED = :toggle_star WHERE ID = :id", {"toggle_star" => toggle_star.to_s, "id" => @id})
+	
+	redirect to('/read-it-later')
+%>
