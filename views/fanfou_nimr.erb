@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <link rel="stylesheet" type="text/css" href="/css/base.css">
-    <title>Sedgewik 的飯否</title>
+    <title>小蔫蔫的飯否</title>
     <style>
       body {
         padding: 10px;
@@ -60,7 +60,6 @@
 	  .created-time-cell {
 		vertical-align: top;
 		min-width: 140px;
-		padding-top: 3px;
 		padding-right: 10px;
 	  }
 	  
@@ -77,15 +76,15 @@
   </head>
   <body>
     <header>
-      <h1><a href="/">飯糰🍙</a> / Sedgewick 的飯否</h1>
+      <h1><a href="/">飯糰🍙</a> / 小蔫蔫的飯否</h1>
     </header>
     <section>
       <br /> <br />
 
 <%
-@conversations.each do |items|
-  owners = items.reduce([]) { |memo, k| memo << @statuses_pool[k]["owner"] }
-  next if owners.uniq == ["小蔫蔫"]
+@conversations_nimr.each do |items|
+  owners = items.reduce([]) { |memo, k| memo << @statuses_pool_nimr[k]["owner"] }
+  next if owners.uniq == ["Sedgewick"]
 %>
 
   <ul>
@@ -98,24 +97,24 @@
 				<tr>
 					<td class="created-time-cell">
 			  	      	<a target="_blank" href="http://fanfou.com/statuses/<%= k %>?fr=viewreply">
-							<%= @statuses_pool[k]["created_at"] %>
+							<%= @statuses_pool_nimr[k]["created_at"] %>
 			  		  	</a>
 					</td>
 					<td class="content-cell">
 						<%
-						if @statuses_pool[k]["owner"] == '小蔫蔫'
+						if @statuses_pool_nimr[k]["owner"] == 'Sedgewick'
 						%>
 							<div>
-								(by <%= @statuses_pool[k]["owner"] %>)
+								(by <%= @statuses_pool_nimr[k]["owner"] %>)
 							</div>
 						<%
 						end
 						%>
-			  		    <%= @statuses_pool[k]["text"].gsub(/^\s*@Sedgewick\s+\|\s+/, '').gsub(/\n/, "<br />") %>
+			  		    <%= @statuses_pool_nimr[k]["text"].gsub(/\n/, "<br />") %>
 			  		  	<br />
-			  		  	<% unless @statuses_pool[k]["photo_url_large"].nil? %>
-							<a href="<%= @statuses_pool[k]["photo_url_large"] %>">
-			  		      	  <img src="<%= @statuses_pool[k]["photo_url_thumb"] %>">
+			  		  	<% unless @statuses_pool_nimr[k]["photo_url_large"].nil? %>
+							<a href="<%= @statuses_pool_nimr[k]["photo_url_large"] %>">
+			  		      	  <img src="<%= @statuses_pool_nimr[k]["photo_url_thumb"] %>">
 			  		    	</a>
 			  		  	<% end %>
 					</td>

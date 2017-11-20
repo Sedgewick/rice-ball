@@ -219,6 +219,23 @@
 		  margin: 10px auto;
 		  width: 300px;
 	  }
+	  
+	  .created-time-cell {
+		vertical-align: top;
+		min-width: 140px;
+		padding-top: 3px;
+		padding-right: 10px;
+	  }
+	  
+	  .content-cell {
+	  	vertical-align: top;
+	  }
+	  
+	  .content-cell .me {
+	  	font-size: 10px;
+		color: #999;
+		margin: 2px 0px 2px 0px;
+	  }
     </style>
   </head>
   <body>
@@ -420,17 +437,37 @@ unless @word.nil?
   
 	  <% items.each do |k| %>
 
+		
 		<li>
-	      <a target="_blank" href="http://fanfou.com/statuses/<%= k %>?fr=viewreply">
-			  <%= Time.parse(@statuses_pool[k]["created_at"]).to_s[0..-7] %>
-		  </a>
-		  - <%= @statuses_pool[k]["text"].gsub(/\n/, "<br />").gsub(/(#{pattern})/i, '<div class="tag">\1</div>') %>
-		  <br />
-		  <% unless @statuses_pool[k]["photo_url"].nil? %>
-		    <a href="<%= @statuses_pool[k]["photo_url"] %>">
-		      <img src="<%= @statuses_pool[k]["photo_url"] %>">
-		    </a>
-		  <% end %>
+			<table>
+				<tbody>
+					<tr>
+						<td class="created-time-cell">
+				  	      	<a target="_blank" href="http://fanfou.com/statuses/<%= k %>?fr=viewreply">
+								<%= @statuses_pool[k]["created_at"] %>
+				  		  	</a>
+						</td>
+						<td class="content-cell">
+							<%
+							if @statuses_pool[k]["owner"] == '小蔫蔫'
+							%>
+								<div class="me">
+									(by <%= @statuses_pool[k]["owner"] %>)
+								</div>
+							<%
+							end
+							%>
+				  		    <%= @statuses_pool[k]["text"].gsub(/^\s*@Sedgewick\s+\|\s+/, '').gsub(/\n/, "<br />").gsub(/(#{pattern})/i, '<div class="tag">\1</div>') %>
+				  		  	<br />
+				  		  	<% unless @statuses_pool[k]["photo_url_large"].nil? %>
+								<a href="<%= @statuses_pool[k]["photo_url_large"] %>">
+				  		      	  <img src="<%= @statuses_pool[k]["photo_url_thumb"] %>">
+				  		    	</a>
+				  		  	<% end %>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 	    </li>
 
 	  <% end %>

@@ -29,10 +29,15 @@ class String
 end
 
 configure do
-  (start = Time.now) && (ff = FanFou.new) && (puts "Started: #{Time.now - start} sec.")
+  (start = Time.now) && (ff = FanFou.new('Sedgewick')) && (puts "Started: #{Time.now - start} sec.")
   set :ff => ff
   set :conversations => ff.conversations
   set :statuses_pool => ff.statuses_pool
+  
+  (start = Time.now) && (ff_nimr = FanFou.new("小蔫蔫")) && (puts "Started: #{Time.now - start} sec.")
+  set :ff_nimr => ff_nimr
+  set :conversations_nimr => ff_nimr.conversations
+  set :statuses_pool_nimr => ff_nimr.statuses_pool
 end
 
 
@@ -54,6 +59,15 @@ get '/fanfou' do
   @statuses_pool = settings.statuses_pool
   
   erb :fanfou
+end
+
+get '/fanfou_nimr' do
+  settings.ff_nimr.update_database
+  settings.ff_nimr.gen_conversations
+  @conversations_nimr = settings.conversations_nimr
+  @statuses_pool_nimr = settings.statuses_pool_nimr
+  
+  erb :fanfou_nimr
 end
 
 get '/log' do

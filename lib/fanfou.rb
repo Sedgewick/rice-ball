@@ -3,21 +3,26 @@ require 'sqlite3'
 class FanFou
   attr_reader :statuses_pool, :conversations
   
-  def initialize
+  def initialize(name)
+    @fanfou_id = name
+    @db_table_name = name
+    @fanfou_id = "~q2lAvUyuRUM" if name == "小蔫蔫" # 讓你手賤不取個英文名😪
     (start = Time.now) && update_database && (puts "UPDATED: #{Time.now - start} sec.")
     (start = Time.now) && gen_conversations && (puts "GEN: #{Time.now - start} sec.")
   end
   
   def update_database
     db = SQLite3::Database.open(Dir.pwd + "/data/fanfou.db")
-    ids = db.execute( "select id from statuses" ).flatten
+    ids = db.execute( "SELECT id FROM #{@db_table_name}" ).flatten
 
     stop_index = -1
     new_statuses = []
     page = 1
     loop do
       this_page_statuses = grab_statuses(page)
-      # puts "page #{page}"
+      puts "grabing page #{page}"
+      break if this_page_statuses.empty?
+      
       this_page_statuses.each_with_index do |status, index|
         if ids.include? status['id']
           puts "got it at #{index}"
@@ -45,7 +50,8 @@ class FanFou
                   (status['photo'] || {'thumburl' => nil, 'largeurl' => nil})['largeurl'],
                   (status['photo'] || {'thumburl' => nil, 'largeurl' => nil})['thumburl']
                  ]
-        db.execute("INSERT INTO statuses (id, raw_id, created_at, content, in_reply_to_status_id, in_reply_to_user_id, favorited, photo_url_large, photo_url_thumb)
+        
+        db.execute("INSERT INTO #{@db_table_name} (id, raw_id, created_at, content, in_reply_to_status_id, in_reply_to_user_id, favorited, photo_url_large, photo_url_thumb)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", record)
       end
     end
@@ -54,8 +60,23 @@ class FanFou
     pp new_statuses[0...(stop_index + 20 * (page - 1))]
     
     @statuses_pool = {}
-    db.execute("SELECT * FROM statuses ORDER BY created_at DESC") do |row|
+    db.execute("SELECT * FROM Sedgewick ORDER BY created_at DESC") do |row|
       @statuses_pool["#{row[0]}"] = {
+                                      'owner' => 'Sedgewick',
+                                      'raw_id' => row[1],
+                                      'created_at' => row[2],
+                                      'text' => row[3],
+                                      'in_reply_to_status_id' => row[4],
+                                      'in_reply_to_user_id' => row[5],
+                                      'favorited' => (row[6] == 'true')? true : false,
+                                      'photo_url_large' => row[7],
+                                      'photo_url_thumb' => row[8]
+                                    }
+    end
+    
+    db.execute("SELECT * FROM 小蔫蔫 ORDER BY created_at DESC") do |row|
+      @statuses_pool["#{row[0]}"] = {
+                                      'owner' => '小蔫蔫',
                                       'raw_id' => row[1],
                                       'created_at' => row[2],
                                       'text' => row[3],
@@ -102,7 +123,7 @@ class FanFou
   
   
   def grab_statuses(page)
-    resp = open("http://api.fanfou.com/statuses/user_timeline.json?id=Sedgewick&page=#{page}")
+    resp = open("http://api.fanfou.com/statuses/user_timeline.json?id=#{@fanfou_id}&page=#{page}")
     JSON.parse(resp.read)
   end
   
