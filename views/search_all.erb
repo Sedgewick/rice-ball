@@ -350,7 +350,8 @@ unless @word.nil?
 		bookmarks[row[0]] = {
 								:url => row[1],
 								:watched_time => row[2][0..-7],
-								:title => row[3].gsub('(Saved)', '').gsub(/^\p{Z}*/, '')
+								:title => row[3].gsub('(Saved)', '').gsub(/^\p{Z}*/, ''),
+								:starred => (row[4] == 'true')
 							}
 	end
 	
@@ -460,6 +461,7 @@ unless @word.nil?
 			  BOOKMARK: <%= bookmarks[id][:watched_time] %>
 			  <br />
 		  	  <a href="<%= bookmarks[id][:url] %>">
+				  <%= bookmarks[id][:starred] ? "🖤" : "" %>
 				  <%= bookmarks[id][:title].gsub(/(#{pattern})/i, '<div class="tag">\1</div>') %>
 			  </a>  
 			</li>
