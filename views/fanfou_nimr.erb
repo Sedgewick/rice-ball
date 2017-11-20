@@ -110,7 +110,7 @@
 						<%
 						end
 						%>
-			  		    <%= @statuses_pool_nimr[k]["text"].gsub(/\n/, "<br />") %>
+			  		    <%= @statuses_pool_nimr[k]["text"].gsub(/^\s*@Sedgewick\s+\|\s+/, '').gsub(/\n/, "<br />") %>
 			  		  	<br />
 			  		  	<% unless @statuses_pool_nimr[k]["photo_url_large"].nil? %>
 							<a href="<%= @statuses_pool_nimr[k]["photo_url_large"] %>">
