@@ -297,28 +297,35 @@ end
 # p traditionalized('吃饭了吗？')
 
 
-def redirect_to(lable, to, query)
-    pat = Regexp.new("^#{lable}:\s*(.+)", Regexp::IGNORECASE)
-    redirect to("#{to}?word=#{CGI.escape(query.scan(pat).first.first)}") if pat.match(query)
-end
-
 unless @word.nil?
 	pattern = CGI.unescape(@word.gsub('+', '::plus::')).gsub(/\s/, '').gsub('::plus::', '+')
+	redirect_list = {
+						'fanfou' => '/search',
+						'blog' => '/search_blog',
+						'stat' => '/chart',
+						'map' => '/stat',
+						'code' => '/search_code',
+						'date' => '/search_all_by_time'
+					}
+	case pattern
+	when "妞妞"
+		redirect '/niu'
+	when "妮妹"
+		redirect '/nimr'
+	when "創意"
+		redirect '/ideas'
+	when "::people::"
+		pattern = "@[^S].*?(?=[，。（）「」\s])"
+	else
+		if /^(?<lable>.+?):\s*(?<query>.+)/ =~ pattern
+			redirect to("#{redirect_list[lable]}?word=#{CGI.escape(query)}")
+		end
+	end
+	
 	pattern = simplized(pattern) + '|' + traditionalized(pattern)
+	
 	puts "word=#{@word}"
 	puts "search => #{pattern}"
-	
-	redirect_to('fanfou', '/search', pattern)
-	redirect_to('blog', '/search_blog', pattern)
-	redirect_to('stat', '/chart', pattern)
-	redirect_to('map', '/stat', pattern)
-	redirect_to('code', '/search_code', pattern)
-	redirect_to('date', '/search_all_by_time', pattern)
-	
-	pattern = /@[^S].*?(?=[，。（）「」\s])/ if @word == "::people::"
-	redirect '/niu' if @word == "妞妞"
-	redirect '/nimr' if @word == "妮妹"
-	redirect '/ideas' if @word == "創意"
 	
 	
 	# search fanfou
