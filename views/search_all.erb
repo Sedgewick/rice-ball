@@ -317,8 +317,9 @@ unless @word.nil?
 	when "::people::"
 		pattern = "@[^S].*?(?=[，。（）「」\s])"
 	else
-		if /^(?<lable>.+?):\s*(?<query>.+)/ =~ pattern
-			redirect to("#{redirect_list[lable]}?word=#{CGI.escape(query)}")
+		if /^(?<lable>.+?):\s*(?<query>.*)/ =~ pattern
+			q = '?word=' + query unless query.empty?
+			redirect to("#{redirect_list[lable]}#{CGI.escape(q || query)}")
 		end
 	end
 	
