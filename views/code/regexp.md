@@ -53,6 +53,24 @@ pat = '\d+'
 ~~~
 
 
+### 3. 到底是`pat =~ str`，還是`str =~ pat`？傻傻分不清☹️
+
+順序沒關係的，`Regexp`和`String`都定義了`=~`模式匹配操作符。不信，看[這](http://ruby-doc.org/core-2.4.2/Regexp.html#class-Regexp-label-3D-7E+operator)。
+
+但！建議還是把模式放`=~`左邊：`pat =~ str`。好處見 Tip 4 。
+
+
+### 4. 隱藏技巧之「named capture groups」
+
+捕獲組可以命名的喔，而且會自動生成同名的局部變量。
+
+~~~ruby
+/\$(?<dollars>\d+)\.(?<cents>\d+)/ =~ "$3.67" #=> 0
+dollars #=> "3"
+~~~
+
+注意⚠️：只有模式在`=~`左邊的時候，命名的捕獲組才會生成同名的局部變量。[文檔](http://ruby-doc.org/core-2.4.2/Regexp.html#class-Regexp-label-Capturing)在這。
+
 ----
 
 總之，大家多看看[主文檔](http://ruby-doc.org/core-2.4.2/Regexp.html)吧。
