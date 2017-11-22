@@ -10,8 +10,8 @@ ids = db.execute("SELECT id FROM bookmarks").flatten
 unless @u.nil?
 	id = Digest::MD5.hexdigest(@u)
 	unless ids.include? id
-		db.execute("INSERT INTO bookmarks (id, url, watched_time, title, starred)
-		            VALUES (?, ?, ?, ?, ?)", [id, @u, Time.at(@tm).to_s, @tl, "false"])
+		db.execute("INSERT INTO bookmarks (id, url, watched_time, title, starred, note)
+		            VALUES (?, ?, ?, ?, ?, ?)", [id, @u, Time.at(@tm).to_s, @tl, "false"], nil)
 	end
 end
 
@@ -21,7 +21,8 @@ db.execute("SELECT * FROM bookmarks ORDER BY watched_time DESC") do |row|
 							:url => row[1],
 							:watched_time => row[2][0..-7],
 							:title => row[3].gsub('(Saved)', '').gsub(/^\p{Z}*/, ''),
-							:starred => (row[4] == 'true')
+							:starred => (row[4] == 'true'),
+							:note => row[5]
 						}
 end
 
@@ -108,6 +109,10 @@ db.close
   		background-position: -300px 0;
 	  }
 	  
+	  .ipicon-edit {
+  		background-position: -569px 0;
+	  }
+	  
 	  .ipicon-liked-off {
 	    background-position: -719px 0;
 	  }
@@ -129,6 +134,16 @@ db.close
 	  .starred .ipicon-liked-off {
 	    display: none;
 	  }
+	  
+	  .note {
+		background-color: #eaeaea;
+	    border-radius: 4px;
+	    padding: 10px;
+	  }
+	  
+	  .note * {
+	  	margin: 0px;
+	  }
     </style>
   </head>
   <body>
@@ -149,10 +164,23 @@ db.close
 			</a>
 		  </li>
 		  <li>
+			<%
+				unless bm[:note].nil? %>
+					<div class="note">
+						<%= Kramdown::Document.new(bm[:note]).to_html %>
+					</div>
+				<%
+				end
+			%>
+		  </li>
+		  <li>
 			<div class="article_actions">
 				<a href="/read-it-later/star-toggle?id=<%= id %>" title="Like " class="action_link star_toggle <%= bm[:starred]? "starred" : "" %>">
 					<span class="ipicon ipicon-liked-on"></span>
 					<span class="ipicon ipicon-liked-off"></span>
+				</a>
+				<a title="Edit" data-article-id="<%= id %>" href="/read-it-later/edit?id=<%= id %>">
+					<span class="ipicon ipicon-edit"></span>
 				</a>
 				<a title="Permanently Delete" data-article-id="<%= id %>" href="/read-it-later/delete?id=<%= id %>">
 					<span class="ipicon ipicon-delete"></span>

@@ -1,0 +1,112 @@
+<%
+	db = SQLite3::Database.open(Dir.pwd + "/data/bookmarks.db")
+	row = db.execute("SELECT * FROM bookmarks WHERE (ID = :id)", {"id" => @id}).first
+	bm = {
+			 :id => row[0],
+			 :url => row[1],
+		     :watched_time => row[2][0..-7],
+		     :title => row[3].gsub('(Saved)', '').gsub(/^\p{Z}*/, ''),
+		     :starred => (row[4] == 'true'),
+		     :note => row[5]
+		 }
+	pp bm
+%>
+<style>
+	#bookmark_edit {
+	    top: 50%;
+	    left: 50%;
+	    width: 730px;
+	    height: 440px;
+		margin: 10px auto;
+		background-color: #f6f8fa;
+	    border-radius: 4px;
+		font-family: jaf-bernina-sans, "Helvetica Neue", Helvetica, Arial, sans-serif;
+	}
+	
+	#bookmark_edit .name {
+	    padding: 20px 30px;
+	    border-bottom: 1px solid #ddd;
+	    font-size: 16px;
+	    font-weight: 600;
+	    margin-bottom: 20px;
+	}
+	
+	#bookmark_edit .group {
+		padding: 0 30px;
+	}
+	
+	#bookmark_edit .group .form_line_labeled {
+		display: inline-block;
+	    margin-bottom: 10px;
+	}
+	
+	#bookmark_edit .group label {
+		float: left;
+	    padding: .75rem 0;
+	    color: #666;
+	    font-size: 18px;
+	    width: 170px;
+	}
+	
+	#bookmark_edit .group input {
+		
+	    padding-top: 10px;
+		float: right;
+	}
+	
+	
+	input, textarea {
+		width: 500px;
+		font-size: 16px;
+	    border-radius: 4px;
+	    border: 1px solid #ccc;
+	    padding: 12px 8px;
+	    margin: 0;
+	    color: #000;
+	}
+	
+	#bookmark_edit .group .form_line_submit {
+	    margin-top: 10px;
+	}
+	
+	#bookmark_edit .group button[type=submit] {
+		float: right;
+		color: #fff!important;
+	    background: #222;
+	    border: 0;
+		font-size: 1rem;
+	    padding: .9375rem 1.875rem 1rem;
+	    border-radius: 4px;
+	}
+	
+	#bookmark_edit .group .form_line_submit button[type=submit]:hover {
+		background: #0074bf;
+	}
+</style>
+
+<div id="bookmark_edit">
+	<div class="name">Edit Bookmark</div>
+	<div class="group">
+		<form method="POST" id="bookmark_edit_form" action="/read-it-later/update/<%= bm[:id] %>" class="modal_form">
+			<div class="form_line_labeled">
+				<label>Title</label>
+				<input id="bookmark_edit_title" autoselect="autoselect" type="text" name="title" value="<%= bm[:title] %>">
+			</div>
+			<div class="form_line_labeled">
+				<label>Link</label>
+				<input id="bookmark_edit_url" type="text" name="url" value="<%= bm[:url] %>">
+			</div>
+			<div class="form_line_labeled">
+				<label>Note</label>
+				<textarea id="bookmark_edit_selection" rows="5" name="note" placeholder="Note (optional)"><%= bm[:note] %></textarea>
+			</div>
+			<div class="form_line_submit">
+				<button type="submit" value="1">Save Changes</button>
+			</div>
+		</form>
+	</div>
+</div>
+
+<%
+	db.close
+%>

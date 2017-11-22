@@ -204,3 +204,24 @@ get '/read-it-later/star-toggle' do
   
   erb :read_it_later_star_toggle
 end
+
+get '/read-it-later/edit' do
+  @id  = params['id']
+  
+  erb :read_it_later_edit
+end
+
+post '/read-it-later/update/:id' do
+  id = params['id']
+  title = params['title']
+  url = params['url']
+  note = params['note']
+  
+  db = SQLite3::Database.open(Dir.pwd + "/data/bookmarks.db")
+  db.execute("UPDATE bookmarks SET title = :title WHERE ID = :id", {"title" => title, "id" => id})
+  db.execute("UPDATE bookmarks SET url = :url WHERE ID = :id", {"url" => url, "id" => id})
+  db.execute("UPDATE bookmarks SET note = :note WHERE ID = :id", {"note" => note, "id" => id})
+  db.close
+  
+  redirect '/read-it-later'
+end
