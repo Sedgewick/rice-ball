@@ -215,7 +215,11 @@ post '/read-it-later/update/:id' do
   id = params['id']
   title = params['title']
   url = params['url']
-  note = params['note']
+  if params['note'].empty?
+    note = nil
+  else
+    note = params['note']
+  end
   
   db = SQLite3::Database.open(Dir.pwd + "/data/bookmarks.db")
   db.execute("UPDATE bookmarks SET title = :title WHERE ID = :id", {"title" => title, "id" => id})
