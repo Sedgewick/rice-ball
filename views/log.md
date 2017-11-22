@@ -1,6 +1,135 @@
+<style>
+	body {
+		margin: 0 auto;
+	    background-color: white;
+	    font-family: Georgia, Palatino, serif;
+	    color: #333333;
+	    max-width: 960px;
+	    padding: 30px;
+	    font-size: 18px;
+	}
+	
+	a {
+		color: #6f6f6f;
+		text-decoration: none;
+		padding: 0px 2px;
+	}
+	
+	a:hover {
+		color: #D7191A;
+	}
+	
+	table{
+		font: 15px/1.2 Consolas, "Courier New", Monaco;
+		text-align: left;
+		vertical-align: baseline;
+		border: 3px solid #888;
+		border-spacing: 1;
+		border-collapse: collapse;
+		margin: 0 auto;
+		margin-top: 5px;
+		color: #000;
+		background-color: #fff;
+		max-width: 100%;
+		overflow: auto
+	}
+	
+	th {
+		color: #fff;
+		background-color: #a82918;
+		border: 3px solid #000;
+		padding: 5px
+	}
+	
+	tbody {
+		border: 3px solid #aaa;
+	}
+	
+	td, tr {
+		border: 1px solid #aaa;
+		padding: 3px 7px 2px 7px;
+		padding-top: 5px;
+		padding-bottom: 4px;
+		min-width: 90px;
+	}
+	
+	tr:nth-child(2n-1) {
+	    background-color: #f6f8fa;
+	}
+	
+	ol {
+		list-style-position: outside;
+	}
+	
+	ul {
+		list-style-type: square;
+	}
+	
+	code {
+		background-color: #E6E6E6;
+		padding: 5px 8px;
+		border-radius: 3px;
+		font-size: 13px;
+	}
+	
+	pre {
+	    background-color: #f8f8f8;
+	    border: 1px solid #cccccc;
+	    font-size: 13px;
+	    line-height: 19px;
+	    overflow: auto;
+	    padding: 6px 10px;
+	    border-radius: 3px;
+	}
+	
+	blockquote:before {
+	    position: absolute;
+	    top: 0;
+	    left: 0;
+	    content: '';
+	    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABQCAYAAADm4nCVAAAAAXNSR0IArs4c6QAABPhJREFUeAHtm4du4zAMhhU33Xuj6Hr/B+oDdO+95919AmykvTRmYtI2DBII7F4Yivx/iqJkX+vPPwkVydvbW3h5eQlcX19fw/v7e/j8/AxfX1/xs7CwEJaXlyvyrviwxEF8xJbG+PHxkcVHrO3iw8gtMPjDw0N4fHyMH/7uJRXmRi+3en6XxsYV8PNiMCcAB+7v78PNzU0EPc+hntHV9EsynPhub29DXlL9DMGMAKbX5eVluL6+jmXl58BN+JvEuri4CM/PzwOHo04AGZACTw1sotzd3UXgKTFFRZWAq6urcH5+3tiMp9QcHx+Hp6enorhnv1chgCmIYxoZkXlWoxvWLRKLma29hhUmAKfOzs7UHasL/rSPBwcHZsk1MAHU98PDw9jh1AUsbT+o9UdHR7Fv17ad2huIADZMu7u7cXORGmralVlNh2MtfRPAQgT4/fa71oFo2mc9o30uQ/oigNV/f3+/sV0OgFPvKT1lSSIdiMxvOvisaWWCD/YiAqj5e3t7jc7809PTeJQgTUgtvVwC6HYAHxKaKmwgaaerkFwCaMMoP00VNpFkf1XSkwA6gbJrYplApHsZ7d1tPzH82gWR9WVlRqvVChMTE2FsbCwMDw+HdrsdP6Ojo/3E0rcus5udbhlCXJOTkzG+zhh/JYBe2PI0M0mS6ND09HTgMzQ0VAYO2Rg8GLKe3SRQGt/4+Hg2dudNVwJ4sKB54tc5INk+OzsbVlZWYpZ3flfWPSXn5OTEbLiRkZGwuroawc8b5D8CyHqr0jM1NRUdsy4teUHT8ViUHkonz7Dn5+fzXMi+/48AnNM+ZiDr19bWwtzcXDZwVTc8qbM446G+b2xs9F1KvxHA1KQn1hSyAsdYZOsgxKe9tpHxJNgg8o0A7ee3lJqtra248g/inPZvtBOMmU2t5/WZQeUbAZq7QTJ/e3u7soW2GyDaCUa9LwI+PmYbMd5j0TpuIDM2NzdrBT7B8uqIlszMzISlpaXC5jICNJ2jHv7W9xb2eEADbCy1nlmzYVxfXx/Qk+8/iwRQG3nHRUPo8evQ7fyMhb2NhjC7aSq4akgkgF2hRmeAU2yw6ihaCUbHw0ZLSyIB1H8NwTnOOeom7Gs0TnQ5PtF+WViNAAvntIjUSrDFxcW+N1p5MSTsDDWyg9pf9oFaXnDp9xrnWpTXoi1n6k/nNdHqDDj1q6sUeXk2jYmdvEWCJRrZnx4tp87W7apx8GaVYImGc5xyarVl2uSxAGt0eMRoIWoEWDinYVNjhtN2araenXElGkfPnPvUVWgyiopla51oTE9LB4uCpxGfZYKpEGDpYFECNGaAZXxxH1AkSBZfi/asiE+dv637DGjt7OxU9v+EO4Hqds9xb9GzpbJeM+/mv+Tf4lGERNF1bBBwAmxwFVt1AsRQ2Sg6ATa4iq06AWKobBSdABtcxVadADFUNopOgA2uYqtOgBgqG0UnwAZXsVUnQAyVjaITYIOr2KoTIIbKRtEJsMFVbNUJEENlo+gE2OAqtuoEiKGyUXQCbHAVW3UCxFDZKDoBNriKrToBYqhsFJ0AG1zFVp0AMVQ2ik6ADa5iq06AGCobRSfABlexVSdADJWNohNgg6vYqhMghspG0QmwwVVs1QkQQ2Wj6ATY4Cq26gSIobJRdAJscBVbdQLEUNkoOgE2uIqtOgFiqGwUnQAbXMVWnQAxVDaKfwGN0SoDfoFaqQAAAABJRU5ErkJggg==") left top no-repeat;
+		background-size: contain;
+	    background-size: contain;
+	    width: 36px;
+	    height: 40px;
+	}
+	
+	blockquote {
+	    position: relative;
+	    display: block;
+	    padding: 44px 45px 25px 48px !important;
+	    color: #9B9B9B;
+	    margin: 20px 0 0 0;
+	    line-height: 26px;
+	    border-left: none;
+	}
+	
+	sup {
+	    background-color: #4A4A4A;
+	    border-radius: 2px;
+	    font-size: 10px;
+	    line-height: 1;
+	    padding: 1px 5px;
+	    top: -0.8em;
+	    margin-left: 2px;
+	    margin-right: 2px;
+	    text-decoration: none;
+	    cursor: help;
+	}
+	
+	sup a {
+		color: #fff;
+	}
+	
+	.footnotes {
+		border-top: 1px solid #DBE2E8;
+		color: #777;
+	}
+</style>
+
 # [「飯糰🍙」](/)更新日誌
 
-照我記得起來的寫吧，記不太清了☹️
+> 照我記得起來的寫吧，記不太清了☹️
 
 1. 應該是十一月六號下午開始萌生建個網站的想法💡 當時是想給妞妞佔個域名，但`kang.xin`是個溢價域名，後面放棄了。那時候連`ssh`登陸都不會。
 2. 到了晚上九點🕘，終於把服務器架好了。用的 Sinatra ，挺簡單的。
@@ -34,6 +163,8 @@
 30. 十九號晚上十一點四十🕦，將「稍後讀」納入了搜索，但目前只能搜索 title 。
 31. 二十號下午五點🕔，給「書籤」（原「稍後讀」）添加了「標心❤️」功能。
 32. 二十號晚上八點半🕣，將妮妹的飯否納入了搜索，並調整了飯嘮的顯示樣式。
+33. 二十二號下午六點🕕，為「書籤」添加了「編輯」功能。
+34. 二十二號晚上十點🕙，為 MarkDown 格式訂製了 CSS 樣式。
 
 
 ----
@@ -52,8 +183,7 @@
 | 搜索「妮妹」      | [/nimr](/nimr)                       | 搜索「和妮妹相關」飯嘮的定製頁面。待後期完善⋯⋯ | 2017/11/08  |
 | 搜索「創意」      | [/ideas](/ideas)                     | 搜索「和創意相關」飯嘮的定製頁面。待後期完善⋯⋯ | 2017/11/08  |
 | 簡書搜索         | [/search_blog](/search_blog)                   | 搜索我在簡書的文章，並給出跳轉鏈接，但不支持實時更新。  | 2017/11/12 |
-| **聚合搜索**     | [/search_all](/search_all)           | 可以同時搜索出我在簡書的文章 & 在飯否的飯嘮，並給出跳轉鏈接。同時支持「高級搜索」，即添加不同的標籤頭，  | 2017/11/12 |
-|                 |            | 可進行不同的搜索（「fanfou:」搜索飯嘮，「blog:」搜索簡書，「stat:」給出詞條統計，「map:」給出熱力統計）。 |           |
+| **聚合搜索**     | [/search_all](/search_all)           | 可以同時搜索出我在簡書的文章 & 在飯否的飯嘮，並給出跳轉鏈接。同時支持「高級搜索」，即添加不同的標籤頭，可進行不同的搜索（「fanfou:」搜索飯嘮，「blog:」搜索簡書，「stat:」給出詞條統計，「map:」給出熱力統計）。   | 2017/11/12 |
 | 代碼庫搜索      | [/search_code](/search_code)          | 在代碼庫中搜索相關文檔。 | 2017/11/14  |
 | 按日期搜索      | [/search_all_by_time](/search_all_by_time)          | 按日期搜索飯嘮或文章。 | 2017/11/15  |
 |-----------------+------------+-----------------+----------------|
@@ -69,25 +199,25 @@
 | 豆瓣電影         | [/movies](/movies)                   | 表格呈現看過的電影。  | 2017/11/11 |
 | 豆瓣讀書         | [/books](/books)                     | 表格呈現讀過的書。但還不能實時更新。  | 2017/11/12 |
 |-----------------+------------+-----------------+----------------|
-| 稍後讀         | [/read-it-later](/read-it-later)       | 點擊書籤，即可標記該網頁。  | 2017/11/19 |
+| 稍後讀         | [/read-it-later](/read-it-later)       | 點擊書籤[^bookmark]，即可標記該網頁。  | 2017/11/19 |
 |-----------------+------------+-----------------+----------------|
 {: rules="groups"}
 
-> 注：書籤🔖內容為：
->
-> - 本地測試版：
->
-> ~~~javascript 
-> javascript:function iprl5()%7Bvar d%3Ddocument,z%3Dd.createElement(%27scr%27%2B%27ipt%27),b%3Dd.body,l%3Dd.location%3Btry%7Bif(!b)throw(0)%3Bd.title%3D%27(Saved) %27%2Bd.title%3Bz.setAttribute(%27src%27,%27http%3A%2F%2Flocalhost%3A4567%2Fread-it-later%3Fu%3D%27%2BencodeURIComponent(l.href)%2B%27%26tl%3D%27%2BencodeURIComponent(d.title)%2B%27%26tm%3D%27%2B%28new Date().getTime()))%3Bb.appendChild(z)%3B%7Dcatch(e)%7Balert(%27Please wait until the page has loaded.%27)%3B%7D%7Diprl5()%3Bvoid(0)
-> ~~~
->
-> - 服務器版：
->
-> ~~~javascript
-javascript:function iprl5()%7Bvar d%3Ddocument,z%3Dd.createElement(%27scr%27%2B%27ipt%27),b%3Dd.body,l%3Dd.location%3Btry%7Bif(!b)throw(0)%3Bd.title%3D%27(Saved) %27%2Bd.title%3Bz.setAttribute(%27src%27,%27http%3A%2F%2F39.108.95.90%3A4567%2Fread-it-later%3Fu%3D%27%2BencodeURIComponent(l.href)%2B%27%26tl%3D%27%2BencodeURIComponent(d.title)%2B%27%26tm%3D%27%2B%28new Date().getTime()))%3Bb.appendChild(z)%3B%7Dcatch(e)%7Balert(%27Please wait until the page has loaded.%27)%3B%7D%7Diprl5()%3Bvoid(0)
-> ~~~
+[^bookmark]:
+	注：書籤🔖內容為：
+	
+	- 本地測試版：
+	
+	~~~javascript 
+	javascript:function iprl5()%7Bvar d%3Ddocument,z%3Dd.createElement(%27scr%27%2B%27ipt%27),b%3Dd.body,l%3Dd.location%3Btry%7Bif(!b)throw(0)%3Bd.title%3D%27(Saved) %27%2Bd.title%3Bz.setAttribute(%27src%27,%27http%3A%2F%2Flocalhost%3A4567%2Fread-it-later%3Fu%3D%27%2BencodeURIComponent(l.href)%2B%27%26tl%3D%27%2BencodeURIComponent(d.title)%2B%27%26tm%3D%27%2B%28new Date().getTime()))%3Bb.appendChild(z)%3B%7Dcatch(e)%7Balert(%27Please wait until the page has loaded.%27)%3B%7D%7Diprl5()%3Bvoid(0)
+	~~~
+	
+	- 服務器版：
+	
+	~~~javascript
+	javascript:function iprl5()%7Bvar d%3Ddocument,z%3Dd.createElement(%27scr%27%2B%27ipt%27),b%3Dd.body,l%3Dd.location%3Btry%7Bif(!b)throw(0)%3Bd.title%3D%27(Saved) %27%2Bd.title%3Bz.setAttribute(%27src%27,%27http%3A%2F%2F39.108.95.90%3A4567%2Fread-it-later%3Fu%3D%27%2BencodeURIComponent(l.href)%2B%27%26tl%3D%27%2BencodeURIComponent(d.title)%2B%27%26tm%3D%27%2B%28new Date().getTime()))%3Bb.appendChild(z)%3B%7Dcatch(e)%7Balert(%27Please wait until the page has loaded.%27)%3B%7D%7Diprl5()%3Bvoid(0)
+	~~~
 
-----
 
 ## **挖坑：**{: style="color: red"}
 
