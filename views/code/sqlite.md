@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="/css/markdown.css">
+
 # 代碼庫之「SQLite」
 
 
@@ -62,4 +64,4 @@ end
 
 ----
 
-有時間可以看看這篇「[SQLite Ruby tutorial](http://zetcode.com/db/sqliteruby/)」
+有時間可以看看這篇「[SQLite Ruby tutorial](http://zetcode.com/db/sqliteruby/)」。
