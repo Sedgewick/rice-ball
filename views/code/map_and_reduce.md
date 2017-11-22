@@ -1,4 +1,7 @@
 <link rel="stylesheet" href="/css/markdown.css">
+<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/styles/tomorrow-night.min.css">
+<script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/highlight.min.js"></script>    
+<script>hljs.initHighlightingOnLoad();</script>
 
 # 代碼庫之「 Ruby 的 map / reduce 」
 
