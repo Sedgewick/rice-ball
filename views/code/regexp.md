@@ -1,3 +1,7 @@
+<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/styles/tomorrow-night.min.css">
+<script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/highlight.min.js"></script>    
+<script>hljs.initHighlightingOnLoad();</script>
+
 # 代碼庫之「 Ruby 的正則表達式」
 
 
@@ -10,11 +14,12 @@
 - `/pat/o` - 可以執行一次`#{}`，這點相當有用，因為模式未必是固定的，比如在請求搜索中；
 - `/pat/x` - 忽略模式中的空格和註釋，但貌似不能忽略範圍量詞中的空格：
 
-~~~ruby
-/\d{3,6}/x =~ '123456'  #=> 0
-/\d{3, 6}/x =~ '123456'  #=> nil
-~~~
-
+<pre>
+	<code class="ruby">
+/\d{3,6}/x =~ '123456'		#=> 0
+/\d{3, 6}/x =~ '123456'		#=> nil
+	</code>
+</pre>
 
 ## 2. 元字符有哪些？
 
