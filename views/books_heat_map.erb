@@ -109,10 +109,10 @@
 	</div>
 	
 	<%
-		watched_books_date = []
-		CSV.read("./data/books.csv").each do |row|
-			watched_books_date << Date.parse(row[-1])
-		end
+		db = SQLite3::Database.open(Dir.pwd + "/data/douban.db")
+		watched_books_date = db.execute("SELECT watched_date FROM book_list")
+		watched_books_date.map! { |e| Date.parse(e.first) }
+		db.close
 		
 		(2009..year).reverse_each do |y|
 		
