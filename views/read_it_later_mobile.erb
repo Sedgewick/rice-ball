@@ -1,0 +1,108 @@
+<script src="/js/vue.js"></script>
+
+<div id="read-it-later">
+	<ul>
+		<li v-for="record in bookmarks">
+			<span v-if="record.starred" class="score">★</span>
+			<span class="title">
+				<a :href="record.url">{{ record.title }}</a>
+			</span>
+			<br />
+			<span class="meta">{{ record.watched_time }}</span>
+			<div v-if="record.note != null">
+				<span class="meta">{{ record.note }}</span>
+			</div>
+		</li>
+	</ul>
+</div>
+
+
+
+<script>
+	var api_url = '/read-it-later/api/get'
+	
+	var app = new Vue({
+
+	  el: '#read-it-later',
+
+	  data: {
+	    bookmarks: null
+	  },
+
+	  created: function () {
+	    this.fetchData()
+	  },
+	  
+	  // watch: {
+	  //   bookmarks: 'fetchData'
+	  // },
+
+	  methods: {
+	    fetchData: function () {
+	      var xhr = new XMLHttpRequest()
+	      var self = this
+	      xhr.open('GET', api_url)
+	      xhr.onload = function () {
+	        self.bookmarks = JSON.parse(xhr.responseText)
+	        console.log('got it.')
+	      }
+	      xhr.send()
+	    }
+	  }
+	})
+</script>
+
+
+	
+<style>
+	body {
+	    color: #34495e;
+		font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
+	    font-size: 15px;
+	    background-color: #f2f3f5;
+	}
+	
+	#read-it-later {
+	    margin: 30px auto;
+	    width: 100%;
+		max-width: 800px;
+		background-color: #fff;
+	    border-radius: 2px;
+	}
+	
+	#read-it-later ul {
+	    list-style-type: none;
+	    padding: 0;
+	    margin: 0;
+	}
+	
+	#read-it-later li {
+	    background-color: #fff;
+	    padding: 20px 30px 20px 80px;
+	    border-bottom: 1px solid #eee;
+	    position: relative;
+	    line-height: 20px;
+	}
+	
+	#read-it-later li a {
+		color: #34495e;
+		text-decoration: none;
+	}
+	
+	#read-it-later .score {
+	    color: #f60;
+	    font-size: 1.1em;
+	    font-weight: 700;
+	    position: absolute;
+	    top: 50%;
+	    left: 0;
+	    width: 80px;
+	    text-align: center;
+	    margin-top: -10px;
+	}
+	
+	#read-it-later .meta {
+	    font-size: .85em;
+	    color: #828282;
+	}
+</style>

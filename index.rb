@@ -229,3 +229,15 @@ post '/read-it-later/update/:id' do
   
   redirect '/read-it-later'
 end
+
+get '/read-it-later/api/get' do
+  erb :read_it_later_get
+end
+
+get '/read-it-later/m' do
+  erb :read_it_later_mobile
+end
+
+get '/js/vue.js' do
+  send_file '/public/js/vue.js'
+end

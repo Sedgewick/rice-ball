@@ -1,0 +1,19 @@
+<%
+db = SQLite3::Database.open(Dir.pwd + "/data/bookmarks.db")
+
+bookmarks = []
+db.execute("SELECT * FROM bookmarks ORDER BY watched_time DESC") do |row|
+	bookmarks << {
+					:id => row[0],
+					:url => row[1],
+					:watched_time => row[2][0..-7],
+					:title => row[3].gsub('(Saved)', '').gsub(/^\p{Z}*/, ''),
+					:starred => (row[4] == 'true'),
+					:note => row[5]
+				 }
+end
+db.close
+
+%>
+
+<%= bookmarks.to_json %>
