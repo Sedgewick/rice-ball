@@ -8,6 +8,12 @@ body {
     font-size: 18px;
 }
 
+p, li {
+	text-align: justify;
+	text-justify: ideographic;
+	line-height: 2rem;
+}
+
 a {
 	color: #6f6f6f;
 	text-decoration: none;
@@ -35,8 +41,8 @@ table{
 
 th {
 	color: #fff;
-	background-color: #a82918;
-	border: 3px solid #000;
+	background-color: #42b983;
+	border: 3px solid #6f6f6f;
 	padding: 5px
 }
 
