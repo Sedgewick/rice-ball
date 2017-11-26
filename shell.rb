@@ -5,7 +5,7 @@ class MD5s
   attr_reader :md5s
   
   def initialize
-    @ignored_dirs = %w<. .. .git .gitignore .DS_Store .sass-cache __FILE__ md5s.json>
+    @ignored_dirs = %W<. .. .git .gitignore .DS_Store .sass-cache #{__FILE__} md5s.json>
     # __FILE__ : the name of the current file
     
     @md5s = []
@@ -18,8 +18,8 @@ class MD5s
   
   def get_all_md5(directory)
     Dir.foreach(directory) do |subdir|
+      next if @ignored_dirs.include? subdir # .scan(/(?<=\/)[\w\.]+$/).first
       if /\./ =~ subdir
-        next if @ignored_dirs.include? subdir
         # p "file: #{subdir}"
         dir = directory + '/' + subdir
         md5s << {
