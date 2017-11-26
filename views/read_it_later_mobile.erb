@@ -3,14 +3,15 @@
 <div id="read-it-later">
 	<ul>
 		<li v-for="record in bookmarks">
-			<span v-if="record.starred" class="score">★</span>
-			<span class="title">
-				<a :href="record.url">{{ record.title }}</a>
-			</span>
-			<br />
-			<span class="meta">{{ record.watched_time }}</span>
-			<div v-if="record.note != null">
-				<span class="meta">{{ record.note }}</span>
+			<div class="starred">
+				<span v-if="record.starred">★</span>
+			</div>
+			<div class="content">
+				<div class="title">
+					<a :href="record.url">{{ record.title }}</a>
+				</div>
+				<div class="meta">{{ record.watched_time }}</div>
+				<div v-if="record.note != null" class="meta">{{ record.note }}</div>
 			</div>
 		</li>
 	</ul>
@@ -58,7 +59,7 @@
 	body {
 	    color: #34495e;
 		font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
-	    font-size: 15px;
+	    font-size: 100%;
 	    background-color: #f2f3f5;
 	}
 	
@@ -78,10 +79,35 @@
 	
 	#read-it-later li {
 	    background-color: #fff;
-	    padding: 20px 30px 20px 80px;
 	    border-bottom: 1px solid #eee;
 	    position: relative;
 	    line-height: 20px;
+		
+		display: flex;
+		flex-direction: row;
+	}
+	
+	#read-it-later .starred {
+	    color: #f60;
+	    font-size: 2rem;
+	    font-weight: 700;
+	    min-width: 100px;
+		
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	
+	#read-it-later .content {
+		padding: 20px 40px 20px 0px;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	
+	#read-it-later .meta {
+	    font-size: .85rem;
+	    color: #828282;
 	}
 	
 	#read-it-later li a {
@@ -89,20 +115,27 @@
 		text-decoration: none;
 	}
 	
-	#read-it-later .score {
-	    color: #f60;
-	    font-size: 1.1em;
-	    font-weight: 700;
-	    position: absolute;
-	    top: 50%;
-	    left: 0;
-	    width: 80px;
-	    text-align: center;
-	    margin-top: -10px;
-	}
-	
-	#read-it-later .meta {
-	    font-size: .85em;
-	    color: #828282;
+	@media screen and (max-device-width: 700px) { /* iPhone 5s: 1136 * 640 px */
+		#read-it-later {
+			font-size: 300%;
+		}
+		
+		#read-it-later li {
+			line-height: 60px;
+			border-bottom: 3px solid #eee;
+		}
+		
+		#read-it-later .starred {
+		    font-size: 200%;
+			min-width: 200px;
+		}
+		
+		#read-it-later .content {
+			padding: 40px 40px 40px 0px;
+		}
+		
+		#read-it-later .content .meta{
+			font-size: 80%;
+		}
 	}
 </style>
