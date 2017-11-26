@@ -60,7 +60,7 @@ class MD5s
     
     @updated_files.each do |dir|
       file = dir.gsub(/^\.\//, '')
-      puts "#{file} is changed. Do you need scp it ?"
+      puts "#{file} is changed. Do you need scp it ? (yes/no)"
       input = STDIN.gets.chomp
       case input
       when /y|yes/
