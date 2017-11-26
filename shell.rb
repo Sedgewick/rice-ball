@@ -78,11 +78,4 @@ end
 
 
 marks = MD5s.new
-
-# marks.get_all_md5('.')
-
-# pp marks.md5s
-
-# marks.check_diff
-
 marks.update
