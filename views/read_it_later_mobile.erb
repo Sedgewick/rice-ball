@@ -1,4 +1,5 @@
-<script src="/js/vue.js"></script>
+<script src="/js/vue.min.js"></script>
+<script src="/js/vue-resource.min.js"></script>
 
 <div id="read-it-later">
 	<ul>
@@ -40,14 +41,11 @@
 
 	  methods: {
 	    fetchData: function () {
-	      var xhr = new XMLHttpRequest()
-	      var self = this
-	      xhr.open('GET', api_url)
-	      xhr.onload = function () {
-	        self.bookmarks = JSON.parse(xhr.responseText)
-	        console.log('got it.')
-	      }
-	      xhr.send()
+		  this.$http.get(api_url)
+		  	        .then((res) => {
+		  	          this.bookmarks = JSON.parse(res.data)
+		  	        })
+		  	        .catch((err) => { console.log(err) })
 	    }
 	  }
 	})

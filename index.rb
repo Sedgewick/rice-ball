@@ -238,6 +238,6 @@ get '/read-it-later/m' do
   erb :read_it_later_mobile
 end
 
-get '/js/vue.js' do
-  send_file '/public/js/vue.js'
+get '/js/:js_file' do
+  send_file "/public/js/#{params['js_file']}"
 end
