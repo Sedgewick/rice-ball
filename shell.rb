@@ -5,7 +5,7 @@ class MD5s
   attr_reader :md5s
   
   def initialize
-    @ignored_dirs = %w<. .. .git .gitignore .DS_Store .sass-cache __FILE__>
+    @ignored_dirs = %w<. .. .git .gitignore .DS_Store .sass-cache __FILE__ md5s.json>
     # __FILE__ : the name of the current file
     
     @md5s = []
