@@ -280,7 +280,7 @@ get '/read-it-later/api/search' do
   end
   db.close
   
-  bookmarks.select { |k, v| /#{q}/i =~ v[:title] }.to_json
+  bookmarks.select { |k, v| (/#{q}/i =~ v[:title]) || (/#{q}/i =~ v[:note]) }.to_json
 end
 
 get '/read-it-later/m' do
