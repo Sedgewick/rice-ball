@@ -1,6 +1,8 @@
 require 'open-uri'
+require 'nokogiri'
 require 'kramdown'
 require 'sinatra'
+require 'digest'
 require "time"
 require 'erb'
 require 'json'
@@ -232,6 +234,26 @@ end
 
 get '/read-it-later/api/get' do
   erb :read_it_later_get
+end
+
+post '/read-it-later/api/add' do
+  url = params['url']
+                     #.gsub(/\?.+$/, '') e.g. https://weibo.com/ttarticle/p/show?id=2309404190947134035470
+  puts "ADD: #{url}"
+  id = Digest::MD5.hexdigest(url)
+  title = Nokogiri::HTML(open(url)).css("title").text
+  info = {
+            id: id,
+            url: url,
+            title: title
+         }
+  
+  db = SQLite3::Database.open(Dir.pwd + "/data/bookmarks.db")
+	db.execute("INSERT INTO bookmarks (id, url, watched_time, title, starred, note)
+	            VALUES (?, ?, ?, ?, ?, ?)", [id, url, Time.now.to_s, title, "false", nil])
+  db.close
+  
+  info.to_json
 end
 
 get '/read-it-later/m' do
