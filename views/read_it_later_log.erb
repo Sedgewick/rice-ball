@@ -1,0 +1,29 @@
+<link rel="stylesheet" href="/css/markdown.css">
+<%
+	f = File.open(Dir.pwd + "/data/bookmarks.log", "r").read
+	log = []
+	h = Hash.new(0)
+	table_log =<<TAB
+visited time | url
+-------------|-----
+TAB
+	f.scan(/^\[(.+?)\]\s(.+)$/).each do |m|
+		log << {
+			   	  visited_time: m[0],
+			   	  url: m[1]
+			   }
+		h[m[1]] += 1
+		table_log += "#{m[0]} | #{m[1]}\n"
+	end
+	
+	table_frq =<<TAB
+url | count
+----|-------
+TAB
+	h.each do |url, count|
+		table_frq += "#{url} | #{count}\n"
+	end
+%>
+
+<%= Kramdown::Document.new(table_log).to_html %>
+<%= Kramdown::Document.new(table_frq).to_html %>

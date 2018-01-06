@@ -293,6 +293,10 @@ get '/read-it-later/redirect' do
   redirect to(url)
 end
 
+get '/read-it-later/log' do
+  erb :read_it_later_log
+end
+
 get '/read-it-later/m' do
   erb :read_it_later_mobile
 end
