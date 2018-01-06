@@ -1,6 +1,20 @@
 <link rel="stylesheet" href="/css/markdown.css">
 <%
 	f = File.open(Dir.pwd + "/data/bookmarks.log", "r").read
+    
+	bookmarks = {}
+    db = SQLite3::Database.open(Dir.pwd + "/data/bookmarks.db")
+    db.execute("SELECT * FROM bookmarks ORDER BY watched_time DESC") do |row|
+    	bookmarks[row[0]] = {
+      							:url => row[1],
+      							:watched_time => row[2][0..-7],
+      							:title => row[3],
+      							:starred => (row[4] == 'true'),
+      							:note => row[5]
+      						}
+    end
+    db.close
+	
 	log = []
 	h = Hash.new(0)
 	table_log =<<TAB
@@ -17,11 +31,13 @@ TAB
 	end
 	
 	table_frq =<<TAB
-url | count
-----|-------
+title | url | ❤️ | count
+------|-----|----|------
 TAB
 	h.each do |url, count|
-		table_frq += "#{url} | #{count}\n"
+		title = bookmarks.select { |k, v| url == v[:url] }.values.first[:title].gsub('|', '--')
+		fav = bookmarks.select { |k, v| url == v[:url] }.values.first[:starred]
+		table_frq += "#{title} | #{url} | #{fav} | #{count}\n"
 	end
 %>
 
