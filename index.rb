@@ -241,7 +241,15 @@ post '/read-it-later/api/add' do
                      #.gsub(/\?.+$/, '') e.g. https://weibo.com/ttarticle/p/show?id=2309404190947134035470
   puts "ADD: #{url}"
   id = Digest::MD5.hexdigest(url)
-  title = Nokogiri::HTML(open(url)).css("title").text
+  
+  begin
+    doc = Nokogiri::HTML(open("https://mp.weixin.qq.com/s/Ed_qK-Y8hh1hW_CCs6o7KA"))
+    title = doc.css('title').text
+  rescue Exception => e
+    p e
+    title = "（呃～～人不讓我抓這個頁面，你自己手動添加吧🤦🏻‍♂️）"
+  end
+  
   info = {
             id: id,
             url: url,
