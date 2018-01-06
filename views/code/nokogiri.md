@@ -31,3 +31,35 @@ doc.css('div.item-show').each do |link|
   end
 end
 ~~~
+
+
+----
+
+## Tips:
+
+### URL Escape Codes
+
+Character | Escape Code
+:----------:|:------------:
+space | %20
+< | %3C
+> | %3E
+# | %23
+% | %25
+{ | %7B
+} | %7D
+vertical line | %7C
+\ | %5C
+^ | %5E
+~ | %7E
+[ | %5B
+] | %5D
+` | %60
+; | %3B
+/ | %2F
+? | %3F
+: | %3A
+@ | %40
+= | %3D
+& | %26
+$ | %24
