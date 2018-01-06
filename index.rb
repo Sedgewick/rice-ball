@@ -283,6 +283,16 @@ get '/read-it-later/api/search' do
   bookmarks.select { |k, v| (/#{q}/i =~ v[:title]) || (/#{q}/i =~ v[:note]) }.to_json
 end
 
+get '/read-it-later/redirect' do
+  url = params['url']
+  
+  File.open(Dir.pwd + "/data/bookmarks.log", "a") do |file|
+    file << "[#{Time.now}] #{url}\n"
+  end
+  
+  redirect to(url)
+end
+
 get '/read-it-later/m' do
   erb :read_it_later_mobile
 end
