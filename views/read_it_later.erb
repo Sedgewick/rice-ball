@@ -1,8 +1,5 @@
 <%
-require 'digest'
-
 db = SQLite3::Database.open(Dir.pwd + "/data/bookmarks.db")
-
 
 ids = db.execute("SELECT id FROM bookmarks").flatten
 # pp ids
@@ -11,7 +8,7 @@ unless @u.nil?
 	id = Digest::MD5.hexdigest(@u)
 	unless ids.include? id
 		db.execute("INSERT INTO bookmarks (id, url, watched_time, title, starred, note)
-		            VALUES (?, ?, ?, ?, ?, ?)", [id, @u, Time.at(@tm).to_s, @tl, "false"], nil)
+		            VALUES (?, ?, ?, ?, ?, ?)", [id, @u, Time.at(@tm).to_s, @tl, "false", nil])
 	end
 end
 
