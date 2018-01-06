@@ -17,7 +17,7 @@
 	
 	log = []
 	h = Hash.new(0)
-	table_log =<<TAB
+	table_log = <<TAB
 visited time | url
 -------------|-----
 TAB
@@ -30,7 +30,7 @@ TAB
 		table_log += "#{m[0]} | #{m[1]}\n"
 	end
 	
-	table_frq =<<TAB
+	table_frq = <<TAB
 title | url | ❤️ | count
 ------|-----|----|------
 TAB
@@ -39,7 +39,26 @@ TAB
 		fav = bookmarks.select { |k, v| url == v[:url] }.values.first[:starred]
 		table_frq += "#{title} | #{url} | #{fav} | #{count}\n"
 	end
+	
+	md = <<MD
+# 頁面價值計算公式
+
+- 每訪問過 1 次，`+1`；
+- 加❤️，`+3`；
+- （暫時就想到這麼多😓）
+
+
+# 訪問記錄
+
+#{table_log}
+
+
+# 訪問頁面統計
+
+#{table_frq}
+
+MD
+
 %>
 
-<%= Kramdown::Document.new(table_log).to_html %>
-<%= Kramdown::Document.new(table_frq).to_html %>
+<%= Kramdown::Document.new(md).to_html %>
