@@ -6,7 +6,12 @@ ids = db.execute("SELECT id FROM bookmarks").flatten
 
 unless @u.nil?
 	id = Digest::MD5.hexdigest(@u)
-	unless ids.include? id
+	if ids.include? id
+		# 再次訪問
+	    File.open(Dir.pwd + "/data/bookmarks.log", "a") do |file|
+			file << "[#{Time.now}] #{@u}\n"
+	    end
+	else
 		db.execute("INSERT INTO bookmarks (id, url, watched_time, title, starred, note)
 		            VALUES (?, ?, ?, ?, ?, ?)", [id, @u, Time.now.to_s, Nokogiri::HTML(open(@u)).css("title").text, "false", nil])
 	end

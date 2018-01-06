@@ -257,8 +257,16 @@ post '/read-it-later/api/add' do
          }
   
   db = SQLite3::Database.open(Dir.pwd + "/data/bookmarks.db")
-	db.execute("INSERT INTO bookmarks (id, url, watched_time, title, starred, note)
-	            VALUES (?, ?, ?, ?, ?, ?)", [id, url, Time.now.to_s, title, "false", nil])
+  urls = db.execute("SELECT url FROM bookmarks").flatten
+	if urls.include? url
+    # 再次訪問
+	  File.open(Dir.pwd + "/data/bookmarks.log", "a") do |file|
+			file << "[#{Time.now}] #{url}\n"
+	  end
+	else
+		db.execute("INSERT INTO bookmarks (id, url, watched_time, title, starred, note)
+		            VALUES (?, ?, ?, ?, ?, ?)", [id, url, Time.now.to_s, title, "false", nil])
+	end
   db.close
   
   info.to_json
