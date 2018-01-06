@@ -93,6 +93,14 @@
 	javascript:function iprl5()%7Bvar d%3Ddocument,z%3Dd.createElement(%27scr%27%2B%27ipt%27),b%3Dd.body,l%3Dd.location%3Btry%7Bif(!b)throw(0)%3Bd.title%3D%27(Saved) %27%2Bd.title%3Bz.setAttribute(%27src%27,%27http%3A%2F%2F39.108.95.90%3A4567%2Fread-it-later%3Fu%3D%27%2BencodeURIComponent(l.href)%2B%27%26tl%3D%27%2BencodeURIComponent(d.title)%2B%27%26tm%3D%27%2B%28new Date().getTime()))%3Bb.appendChild(z)%3B%7Dcatch(e)%7Balert(%27Please wait until the page has loaded.%27)%3B%7D%7Diprl5()%3Bvoid(0)
 	~~~
 
+已實現 API :
+
+功能 | action | API
+----|--------|-----
+獲取所有書籤 | GET | /read-it-later/api/get
+添加書籤 | POST | /read-it-later/api/add?url=`bla bla ...`
+搜索某個關鍵詞 | GET | /read-it-later/api/search?q=`bla bla ...`
+刪除某個書籤 | GET | /read-it-later/api/delete?id=`bla bla ...`
 
 ## **挖坑：**{: style="color: red"}
 
