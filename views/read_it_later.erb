@@ -8,7 +8,7 @@ unless @u.nil?
 	id = Digest::MD5.hexdigest(@u)
 	unless ids.include? id
 		db.execute("INSERT INTO bookmarks (id, url, watched_time, title, starred, note)
-		            VALUES (?, ?, ?, ?, ?, ?)", [id, @u, Time.at(@tm).to_s, @tl, "false", nil])
+		            VALUES (?, ?, ?, ?, ?, ?)", [id, @u, Time.now.to_s, Nokogiri::HTML(open(@u)).css("title").text, "false", nil])
 	end
 end
 
