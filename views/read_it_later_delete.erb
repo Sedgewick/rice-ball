@@ -1,6 +1,7 @@
 <%
 	db = SQLite3::Database.open(Dir.pwd + "/data/bookmarks.db")
 	db.execute("DELETE FROM bookmarks WHERE (ID = :id)", {"id" => @id})
+	db.close
 	
 	redirect to('/read-it-later')
 %>

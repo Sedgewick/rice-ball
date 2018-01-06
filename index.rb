@@ -256,6 +256,14 @@ post '/read-it-later/api/add' do
   info.to_json
 end
 
+get '/read-it-later/api/delete' do
+  id  = params['id']
+  
+	db = SQLite3::Database.open(Dir.pwd + "/data/bookmarks.db")
+	db.execute("DELETE FROM bookmarks WHERE (ID = :id)", {"id" => id})
+	db.close
+end
+
 get '/read-it-later/m' do
   erb :read_it_later_mobile
 end
