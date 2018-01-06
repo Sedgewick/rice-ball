@@ -264,6 +264,25 @@ get '/read-it-later/api/delete' do
 	db.close
 end
 
+get '/read-it-later/api/search' do
+  q = params['q']
+  
+  bookmarks = {}
+  db = SQLite3::Database.open(Dir.pwd + "/data/bookmarks.db")
+  db.execute("SELECT * FROM bookmarks ORDER BY watched_time DESC") do |row|
+  	bookmarks[row[0]] = {
+            							:url => row[1],
+            							:watched_time => row[2][0..-7],
+            							:title => row[3],
+            							:starred => (row[4] == 'true'),
+            							:note => row[5]
+            						}
+  end
+  db.close
+  
+  bookmarks.select { |k, v| /#{q}/i =~ v[:title] }.to_json
+end
+
 get '/read-it-later/m' do
   erb :read_it_later_mobile
 end
