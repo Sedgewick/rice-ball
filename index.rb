@@ -187,6 +187,12 @@ get '/search_all_by_time' do
   erb :search_all_by_time
 end
 
+get '/search_bookmark' do
+  @word = params[:word]
+  
+  erb :search_bookmark
+end
+
 get '/read-it-later' do
   @u  = params['u']
   @tl = params['tl']
