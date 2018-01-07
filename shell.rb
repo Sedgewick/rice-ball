@@ -1,5 +1,4 @@
 require 'json'
-require 'pp'
 
 DEBUG = false
 
@@ -60,10 +59,6 @@ class MD5s
       end
     end
     
-    File.open('./md5s.json', 'w') do |f|
-      f.write @md5s.to_json
-    end
-    
     @updated_files
   end
   
@@ -82,11 +77,17 @@ class MD5s
         puts "#{file} is UPDATED!"
       when /n|no/
         puts "😒"
+        @md5s.delete_if { |d| d[:file_name] == dir } # Fix BUG: 當本次選擇不同步，則下次將不會被更新，因為新 MD5 值已經寫入文件了。
       else
         answers = ["wrong answer😒", "丫在調戲我嗎🤯", "能不能認真點😤"]
         puts answers[rand(answers.size)]
       end
     end
+    
+    File.open('./md5s.json', 'w') do |f|
+      f.write @md5s.to_json
+    end
+    
   end
 end
 
