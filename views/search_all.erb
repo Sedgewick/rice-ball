@@ -318,8 +318,8 @@ unless @word.nil?
 		pattern = "@[^S].*?(?=[，。（）「」\s])"
 	else
 		if /^(?<lable>.+?):\s*(?<query>.*)/ =~ pattern
-			q = '?word=' + query unless query.empty?
-			redirect to("#{redirect_list[lable]}#{CGI.escape(q || query)}")
+			q = '?word=' + CGI.escape(query) unless query.empty?
+			redirect to("#{redirect_list[lable]}#{q || query}")
 		end
 	end
 	
