@@ -238,13 +238,14 @@ unless @word.nil?
 								:url => row[1],
 								:watched_time => row[2][0..-7],
 								:title => row[3].gsub(/^\p{Z}*/, ''),
-								:starred => (row[4] == 'true')
+								:starred => (row[4] == 'true'),
+								:note => row[5]
 							}
 	end
 	
 	matched_bookmark_ids = []
 	bookmarks.each do |id, details|
-		matched_bookmark_ids << id if /#{pattern}/io =~ details[:title]
+		matched_bookmark_ids << id if (/#{pattern}/io =~ details[:title]) || (/#{pattern}/io =~ details[:url]) || (/#{pattern}/io =~ details[:note])
 	end
 
 	db.close
@@ -279,7 +280,9 @@ unless @word.nil?
   		  	  <a href="/read-it-later/redirect?url=<%= bookmarks[id][:url] %>">
   				  <%= bookmarks[id][:starred] ? "🖤" : "" %>
   				  <%= bookmarks[id][:title].gsub(/(#{pattern})/i, '<div class="tag">\1</div>') %>
-  			  </a>  
+  			  </a>
+			  <br />
+			  <%= Kramdown::Document.new(bookmarks[id][:note]).to_html unless bookmarks[id][:note].nil? %>
   			</li>
   	  	</ul>
   	<% end
