@@ -35,17 +35,58 @@ title | url | ❤️ | count
 ------|-----|----|------
 TAB
 	h.each do |url, count|
-		title = bookmarks.select { |k, v| url == v[:url] }.values.first[:title].gsub('|', '--')
-		fav = bookmarks.select { |k, v| url == v[:url] }.values.first[:starred]
+		bm = bookmarks.select { |k, v| url == v[:url] }.values.first
+		title = bm[:title].gsub('|', '--')
+		fav = bm[:starred]
 		table_frq += "#{title} | #{url} | #{fav} | #{count}\n"
+	end
+	
+	t = <<TAB
+url | protocal | host | port | path | suffix | anchor | params
+----|----------|------|------|------|--------|--------|--------
+TAB
+	websites = Hash.new(0)
+	bookmarks.each do |k, v|
+# 		m = v[:url].match(/
+# 							(?<protocol>http(s)?)
+# 							:\/\/
+# 							(?<host>[\w-.]+)
+# 							(:(?<port>\d{4}))?
+# 							(?<path>(\/[\w-]+)*\/?)
+# 							(\.(?<suffix>\w+))?
+# 							(\#(?<anchor>[\w-]+))?
+# 							(\?
+# 							  (?<params>
+# 							    (
+# 							      (\w+=\w+)
+# 							      (&(\w+=\w+))*
+# 							    )
+# 							  )
+# 							)?
+# 						  /x)
+# 		t +=  "#{v[:url]} | #{m[:protocol]} | #{m[:host]} | #{m[:port]} | #{m[:path]} | #{m[:suffix]} | #{m[:anchor]} | #{m[:params]}\n"
+# 		websites["#{m[:protocol]}://#{m[:host]}"] += 1
+		websites[v[:url].scan(/https?:\/\/[\w.-]+/).first] += 1
+	end
+#	%><%= Kramdown::Document.new(t).to_html %><%
+	
+	table_web = <<TAB
+title | count
+------|-------
+TAB
+	websites.sort_by{ |k, v| v }.reverse_each do |website, c|
+		table_web += "[#{website}](#{website}) | #{c}\n"
 	end
 	
 	md = <<MD
 # 書籤價值計算公式
 
-- 每訪問過 1 次，`+1`；
-- 加❤️，`+3`；
+- 加「書籤的訪問次數」；
+- 如❤️，`+3`；
+- 加上「根網站[^root]的蒐藏次數」；
 - （暫時就想到這麼多😓）
+
+[^root]: 問題在於「如何判斷根網站」。因為如果是託管類網站，根網站並非博主本身（比如：`weibo.com`）。
 
 # TODO
 
@@ -64,6 +105,10 @@ TAB
 
 #{table_frq}
 
+
+# 訪問網站統計
+
+#{table_web}
 MD
 
 %>
