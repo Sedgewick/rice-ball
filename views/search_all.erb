@@ -262,6 +262,8 @@ if @word.nil? %>
 		- 關鍵詞前加「<a href="/search_code">code:</a>」搜索代碼庫；
 		<br />
 		- 關鍵詞前加「<a href="/search_all_by_time">date:</a>」搜索該天發佈的飯嘮或文章；
+		<br />
+		- 關鍵詞前加「<a href="/search_bookmark">bookmark:</a>」搜索書籤；
 	</div>
 <% end
 %>
@@ -305,7 +307,8 @@ unless @word.nil?
 						'stat' => '/chart',
 						'map' => '/stat',
 						'code' => '/search_code',
-						'date' => '/search_all_by_time'
+						'date' => '/search_all_by_time',
+						'bookmark' => '/search_bookmark',
 					}
 	case pattern
 	when "妞妞"
