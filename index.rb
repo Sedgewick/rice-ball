@@ -326,3 +326,7 @@ end
 get '/js/:js_file' do
   send_file "/public/js/#{params['js_file']}"
 end
+
+get '/to-do-list' do
+  erb :to_do_list
+end

@@ -1,0 +1,38 @@
+<link rel="stylesheet" type="text/css" href="/css/magic-input.min.css">
+<script src="https://unpkg.com/vue"></script>
+
+<%
+md = <<MD
+- [] to do sth.
+- [] bla bla ...
+MD
+
+def template(str)
+	id = Digest::MD5.hexdigest(str)
+	
+	"<li style='list-style-type:none'>" +
+	"  <input type='checkbox' class='mgc mgc-success' id='#{id}' value='#{str}' v-model='toDoList'>" +
+	"  <label for='#{id}'>#{str}</label>" +
+	"</li>"
+end
+
+check_list = Kramdown::Document.new(md).to_html
+									   .gsub(/<li>(\[\]\s*(?<list>.+))<\/li>/, template('\k<list>'))
+%>
+
+
+
+<div id='example-3'>
+	<%= check_list %>
+  	<br>
+  	<span>TO DO LIST: {{ toDoList }}</span>
+</div>
+
+<script>
+	new Vue({
+	  el: '#example-3',
+	  data: {
+	    toDoList: []
+	  }
+	})
+</script>
