@@ -5,6 +5,7 @@ ids = db.execute("SELECT id FROM bookmarks").flatten
 # pp ids
 
 unless @u.nil?
+	puts "@u is #{@u}"
 	id = Digest::MD5.hexdigest(@u)
 	if ids.include? id
 		# 再次訪問
