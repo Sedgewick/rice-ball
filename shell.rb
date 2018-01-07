@@ -54,7 +54,7 @@ class MD5s
       else
         old_md5 = old_file.first['md5']
         unless old_md5 == file[:md5]
-          puts "#{fname} UPDAT!"
+          DEBUG && puts("#{fname} UPDAT!")
           @updated_files << fname
         end
       end
