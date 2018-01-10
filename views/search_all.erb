@@ -508,7 +508,7 @@ unless @word.nil?
 			<li>
 			  BOOKMARK: <%= bookmarks[id][:watched_time] %>
 			  <br />
-		  	  <a href="<%= bookmarks[id][:url] %>">
+		  	  <a href="/read-it-later/redirect?url=<%= bookmarks[id][:url] %>">
 				  <%= bookmarks[id][:starred] ? "🖤" : "" %>
 				  <%= bookmarks[id][:title].gsub(/(#{pattern})/i, '<div class="tag">\1</div>') %>
 			  </a>  
