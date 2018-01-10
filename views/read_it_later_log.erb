@@ -17,10 +17,12 @@
 	
 	log = []
 	h = Hash.new(0)
+	
 	table_log = <<TAB
 visited time | url
 -------------|-----
 TAB
+
 	f.scan(/^\[(.+?)\]\s(.+)$/).each do |m|
 		log << {
 			   	  visited_time: m[0],
@@ -34,11 +36,24 @@ TAB
 title | url | ❤️ | count
 ------|-----|----|------
 TAB
-	h.each do |url, count|
-		bm = bookmarks.select { |k, v| url == v[:url] }.values.first
-		title = bm[:title].gsub('|', '--')
-		fav = bm[:starred]
-		table_frq += "#{title} | #{url} | #{fav} | #{count}\n"
+	h.sort_by{ |k, v| v }.reverse_each do |url, count|
+		case url
+		when /\/s\?q=(.+)/
+			table_frq += "search: #{$1} | /s | - | #{count}\n"
+		else
+			sel = bookmarks.select { |k, v| url == v[:url] }
+			if sel.empty?
+				table_frq += "- | #{url} | - | #{count}\n"
+			else
+				bm = sel.values.first
+				title = bm[:title].gsub('|', '--')
+				fav = bm[:starred]
+				table_frq += "#{title} | #{url} | #{fav} | #{count}\n"
+			end
+		end
+		
+		# %><%= bm %><br /><%
+		
 	end
 	
 	t = <<TAB
@@ -66,7 +81,12 @@ TAB
 # 						  /x)
 # 		t +=  "#{v[:url]} | #{m[:protocol]} | #{m[:host]} | #{m[:port]} | #{m[:path]} | #{m[:suffix]} | #{m[:anchor]} | #{m[:params]}\n"
 # 		websites["#{m[:protocol]}://#{m[:host]}"] += 1
-		websites[v[:url].scan(/https?:\/\/[\w.-]+/).first] += 1
+		case v[:url]
+		when /https?:\/\/([\w.-]+)/
+			websites[$1] += 1
+		else
+			websites["ERROR: #{v[:url]}"] += 1
+		end
 	end
 #	%><%= Kramdown::Document.new(t).to_html %><%
 	
@@ -84,6 +104,7 @@ TAB
 - 加「書籤的訪問次數」；
 - 如❤️，`+3`；
 - 加上「根網站[^root]的蒐藏次數」；
+- （借助飯否上的數據進一步提供支撐）
 - （暫時就想到這麼多😓）
 
 [^root]: 問題在於「如何判斷根網站」。因為如果是託管類網站，根網站並非博主本身（比如：`weibo.com`）。

@@ -330,3 +330,13 @@ end
 get '/to-do-list' do
   erb :to_do_list
 end
+
+get '/s' do
+  q = params['q']
+  
+  File.open(Dir.pwd + "/data/bookmarks.log", "a") do |file|
+    file << "[#{Time.now}] /s?q=#{q}\n"
+  end
+  
+  redirect to("https://cn.bing.com/search?q=#{q}")
+end
