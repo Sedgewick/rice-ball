@@ -240,7 +240,7 @@ unless @word.nil?
 	puts "word=#{@word}"
 	puts "search => #{pattern}"
 	
-	redirect_to('fanfou', '/search', pattern)
+	redirect_to('fanfou', '/search_fanfou', pattern)
 	redirect_to('blog', '/search_blog', pattern)
 	redirect_to('stat', '/chart', pattern)
 	redirect_to('map', '/stat', pattern)

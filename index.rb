@@ -94,7 +94,7 @@ get '/nimr' do
   erb :nimr
 end
 
-get '/search' do
+get '/search_fanfou' do
   @conversations = settings.conversations
   @statuses_pool = settings.statuses_pool
   
@@ -161,7 +161,7 @@ get '/search_blog' do
   erb :search_blog
 end
 
-get '/search_all' do
+get '/search' do
   @word = params[:word]
   @conversations = settings.conversations
   @statuses_pool = settings.statuses_pool

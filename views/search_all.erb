@@ -242,7 +242,7 @@
     <header>
       <h1><a href="/">飯糰🍙</a> / 「<%= @word %>」</h1>
     </header>
-	<form class="form-wrapper cf" action="/search_all">
+	<form class="form-wrapper cf" action="/search">
 		<input type="text" placeholder="試試「@[^S].*?(?=[，。（）「」\s])」或者「::people::」" name="word" required>
 		<button type="submit">Search</button>
 	</form>
@@ -251,7 +251,7 @@
 if @word.nil? %>
 	<div class="tip" style="text-align: left">支持定製搜索：
 		<br />
-		- 關鍵詞前加「<a href="/search">fanfou:</a>」將搜索範圍限定在飯否；
+		- 關鍵詞前加「<a href="/search_fanfou">fanfou:</a>」將搜索範圍限定在飯否；
 		<br />
 		- 關鍵詞前加「<a href="/search_blog">blog:</a>」將搜索範圍限定在簡書；
 		<br />
@@ -307,7 +307,7 @@ unless @word.nil?
     end
 	
 	redirect_list = {
-						'fanfou' => '/search',
+						'fanfou' => '/search_fanfou',
 						'blog' => '/search_blog',
 						'stat' => '/chart',
 						'map' => '/stat',
