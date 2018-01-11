@@ -40,6 +40,8 @@ TAB
 		case url
 		when /\/s\?q=(.+)/
 			table_frq += "search: #{$1} | /s | - | #{count}\n"
+		when /\/search\?word=(.+)/
+			table_frq += "search: #{$1} | /search | - | #{count}\n"
 		else
 			sel = bookmarks.select { |k, v| url == v[:url] }
 			if sel.empty?

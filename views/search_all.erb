@@ -301,6 +301,11 @@ end
 
 unless @word.nil?
 	pattern = CGI.unescape(@word.gsub('+', '::plus::')).gsub(/\s/, '').gsub('::plus::', '+')
+	
+    File.open(Dir.pwd + "/data/bookmarks.log", "a") do |file|
+    	file << "[#{Time.now}] /search?word=#{pattern}\n"
+    end
+	
 	redirect_list = {
 						'fanfou' => '/search',
 						'blog' => '/search_blog',
