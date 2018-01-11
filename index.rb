@@ -338,5 +338,5 @@ get '/s' do
     file << "[#{Time.now}] /s?q=#{q}\n"
   end
   
-  redirect to("https://cn.bing.com/search?q=#{q}")
+  redirect to("https://cn.bing.com/search?q=#{CGI::escape(q)}")
 end
