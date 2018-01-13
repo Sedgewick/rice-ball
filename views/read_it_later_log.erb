@@ -18,18 +18,24 @@
 	log = []
 	h = Hash.new(0)
 	
+	Equipments = {"Pope-iPhone-5s" => "小小白Ⅱ", "Ni-iPhone-5s" => "妮白", "iPhone-x" => "小小白X", "iPad" => "小黑", "Air" => "小白", "Pro" => "大白", "ASUS" => "破本"}
+	
 	table_log = <<TAB
-visited time | url
--------------|-----
+visited time | from | url
+-------------|------|-----
 TAB
 
-	f.scan(/^\[(.+?)\]\s(.+)$/).each do |m|
+	f.scan(/^\[(.+?)\](\[from:\s(.+?)\])?\s(.+)$/).each do |m|
+   	  visited_time = m[0]
+	  from = Equipments[m[2]]
+   	  url = m[3]
 		log << {
-			   	  visited_time: m[0],
-			   	  url: m[1]
+			   	  visited_time: visited_time,
+				  from: from,
+			   	  url: url
 			   }
-		h[m[1]] += 1
-		table_log += "#{m[0]} | #{m[1]}\n"
+		h[url] += 1
+		table_log += "#{visited_time} | #{from} | #{url}\n"
 	end
 	
 	table_frq = <<TAB
@@ -39,7 +45,7 @@ TAB
 	h.sort_by{ |k, v| v }.reverse_each do |url, count|
 		case url
 		when /\/s\?q=(.+)/
-			table_frq += "search: #{$1} | /s | - | #{count}\n"
+			table_frq += "search: #{$1}| /s | - | #{count}\n"
 		when /\/search\?word=(.+)/
 			table_frq += "search: #{$1} | /search | - | #{count}\n"
 		else

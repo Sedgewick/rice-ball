@@ -333,10 +333,11 @@ end
 
 get '/s' do
   q = params['q']
+  from = params['from']
   
   File.open(Dir.pwd + "/data/bookmarks.log", "a") do |file|
-    file << "[#{Time.now}] /s?q=#{q}\n"
+    file << "[#{Time.now}][from: #{from}] /s?q=#{q}\n"
   end
   
-  redirect to("https://cn.bing.com/search?q=#{CGI::escape(q)}")
+  redirect to("https://www.baidu.com/s?wd=#{CGI::escape(q)}")
 end
