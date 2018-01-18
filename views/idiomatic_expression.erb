@@ -1,7 +1,7 @@
 <%
-def get_explanation(url)
-	site = "http://book.5ilog.com/cgi-bin/mz/chengyu/i.aspx/"
-	doc = Nokogiri::HTML(open(site + url))
+
+def get_explanation(url)	
+	doc = Nokogiri::HTML(open(url))
 
 	h = {}
 	doc.css('.mzbglight td').first.to_html.split(/\r\n/).each do |row|
@@ -25,9 +25,11 @@ cis = []
     end
 end
 
-
+site = "http://book.5ilog.com/cgi-bin/mz/chengyu/i.aspx/"
 explanations = []
+
 cis.uniq!.select { |e| /#{@word}/ =~ e }.each do |ci|
+	p ci
 	x = ci[0]
 	letter = ""
 	zis.each do |l, z|
@@ -37,10 +39,14 @@ cis.uniq!.select { |e| /#{@word}/ =~ e }.each do |ci|
 		end
 	end
 	url = @dictionary[letter][x][ci]
-	explanations << get_explanation(url)
+	explanations << get_explanation(site + url)
 end
 
 pp explanations
+
+if explanations.empty? and @word.size == 4
+	explanations = get_explanation(site + "#{CGI::escape(@word)}.htm")
+end
 %>
 
 <%= explanations.to_json %>
