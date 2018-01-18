@@ -1,0 +1,46 @@
+<%
+def get_explanation(url)
+	site = "http://book.5ilog.com/cgi-bin/mz/chengyu/i.aspx/"
+	doc = Nokogiri::HTML(open(site + url))
+
+	h = {}
+	doc.css('.mzbglight td').first.to_html.split(/\r\n/).each do |row|
+		next unless /<b class=\"t\">(?<v>.+)/ =~ row
+		a, b = v.gsub("<br>", "").gsub(/<div.*?>/, "").gsub(/<span.+?>/, "").gsub(/<\/(div|span)>/, "").split(/：<\/b>[　\s\t]*/)
+		h[a] = b
+	end
+	h
+end
+
+zis = {}
+cis = []
+
+@dictionary.each do |letter, v1|
+	zis[letter] = []
+    v1.each do |zi, v2|
+		zis[letter] << zi
+        v2.each do |ci, url|
+            cis << ci
+        end
+    end
+end
+
+
+explanations = []
+cis.uniq!.select { |e| /#{@word}/ =~ e }.each do |ci|
+	x = ci[0]
+	letter = ""
+	zis.each do |l, z|
+		if z.include? x
+			letter = l
+			break
+		end
+	end
+	url = @dictionary[letter][x][ci]
+	explanations << get_explanation(url)
+end
+
+pp explanations
+%>
+
+<%= explanations.to_json %>

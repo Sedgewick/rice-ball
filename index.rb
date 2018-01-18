@@ -40,6 +40,9 @@ configure do
   set :ff_nimr => ff_nimr
   set :conversations_nimr => ff_nimr.conversations
   set :statuses_pool_nimr => ff_nimr.statuses_pool
+  
+  (start = Time.now) && (dictionary = JSON.parse(File.open(Dir.pwd + "/data/idiomatic_expression.json", "r").read)) && (puts "讀取成語字典花了: #{Time.now - start} sec.")
+  set :dictionary => dictionary
 end
 
 
@@ -340,4 +343,11 @@ get '/s' do
   end
   
   redirect to("https://www.baidu.com/s?wd=#{CGI::escape(q)}")
+end
+
+get '/idiomatic-expression/get' do
+  @word = params['word']
+  @dictionary = settings.dictionary
+  
+  erb :idiomatic_expression
 end
