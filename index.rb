@@ -4,8 +4,9 @@ require 'kramdown'
 require 'sinatra'
 require 'digest'
 require "time"
-require 'erb'
 require 'json'
+require 'date'
+require 'erb'
 require "pp"
 require_relative 'lib/fanfou.rb'
 
@@ -350,4 +351,8 @@ get '/idiomatic-expression/get' do
   @dictionary = settings.dictionary
   
   erb :idiomatic_expression
+end
+
+get '/read-it-later/heat-map' do
+  erb :bookmarks_heat_map
 end
