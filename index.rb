@@ -31,6 +31,18 @@ class String
   end
 end
 
+class Integer
+	def sign
+		if self > 0
+			"+"
+		elsif self == 0
+			""
+		else # n < 0
+			"-"
+		end
+	end
+end
+
 configure do
   (start = Time.now) && (ff = FanFou.new('Sedgewick')) && (puts "Started: #{Time.now - start} sec.")
   set :ff => ff
@@ -282,6 +294,17 @@ post '/read-it-later/api/add' do
   info.to_json
 end
 
+post '/read-it-later/api/update' do
+  id = params[:id]
+  title = params[:title]
+  
+  db = SQLite3::Database.open(Dir.pwd + "/data/bookmarks.db")
+  db.execute("UPDATE bookmarks SET title = :title WHERE ID = :id", {"title" => title, "id" => id})
+  db.close
+  
+  "UPDATE #{id}'s title to #{title}."
+end
+
 get '/read-it-later/api/delete' do
   id  = params['id']
   
@@ -327,6 +350,10 @@ get '/read-it-later/m' do
   erb :read_it_later_mobile
 end
 
+get '/read-it-later/responsive' do
+  erb :read_it_later_responsive
+end
+
 get '/js/:js_file' do
   send_file "/public/js/#{params['js_file']}"
 end
@@ -355,4 +382,11 @@ end
 
 get '/read-it-later/heat-map' do
   erb :bookmarks_heat_map
+end
+
+get '/achievements' do
+  @conversations = settings.conversations
+  @statuses_pool = settings.statuses_pool
+  
+  erb :achievements
 end
