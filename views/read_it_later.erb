@@ -172,7 +172,7 @@ db.close
 	  index = bookmarks.size
 	  bookmarks.each do |id, bm| %>
 		<ul>
-		  <span class="no"><%= index %><% index -= 1 %></span>	
+		  <span class="no"><%= index %><% index -= 1 %></span>
 		  <li>
             <%= bm[:watched_time] %>
 		  </li>
@@ -203,7 +203,7 @@ db.close
 				<a title="Permanently Delete" data-article-id="<%= id %>" href="/read-it-later/delete?id=<%= id %>">
 					<span class="ipicon ipicon-delete"></span>
 				</a>
-			</div>	
+			</div>
 		  </li>
 		</ul>
 	  <% end %>
