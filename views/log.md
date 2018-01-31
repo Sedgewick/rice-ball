@@ -101,6 +101,7 @@
 ----|--------|-----
 獲取所有書籤 | GET | /read-it-later/api/get
 添加書籤 | POST | /read-it-later/api/add?url=`bla bla ...`
+修改某個書籤的 title | POST | /read-it-later/api/update?id=`bla bla ...`&title=`bla bla ...`
 搜索某個關鍵詞 | GET | /read-it-later/api/search?q=`bla bla ...`
 刪除某個書籤 | GET | /read-it-later/api/delete?id=`bla bla ...`
 
