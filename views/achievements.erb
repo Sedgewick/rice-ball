@@ -1,0 +1,200 @@
+<link rel="stylesheet" href="/css/markdown.css">
+<script src="http://echarts.baidu.com/dist/echarts.common.min.js"></script>
+<style type="text/css" media="screen">
+  
+</style>
+<style type="text/css" media="screen">
+    .no {
+  		font-size: 9px;
+		line-height: 9px;
+		font-weight: 500;
+		border-radius: 10px;
+		display: inline-block;
+		background-color: #ff4b4b;
+		color: white;
+		padding: 2px 5px 2px 5px;
+		cursor: pointer;
+	}
+	.color-2 {
+		background-color: #FF4500;
+	}
+	.color-3 {
+		background-color: #FF7340;
+	}
+	.color-4 {
+		background-color: #FFC273;
+	}
+	.color-5 {
+		background-color: #00B060;
+	}
+	.color-6 {
+		background-color: #0A64A4;
+	}
+</style>
+
+<%
+def format(n)
+	"*#{n.sign}#{n.abs}*{: .no .color-#{n}}"
+end
+
+total_score = 0
+md = ""
+
+d_day = Date.parse("2009-02-14")
+n = (Date.parse(Time.now.to_s) - d_day).to_i
+date = []
+n.times do |i|
+	date << "'#{(d_day + i).to_s[0..9].gsub('-', '/')}'"
+end
+
+data = Array.new(n + 1, 0)
+
+scores = {}
+
+@statuses_pool.sort_by {|k, v| v['created_at'] }.each do |k, v|
+	# next unless v['created_at'][0..3].to_i >= 2017
+	h = {}
+	case v['text']
+	when /抑鬱/
+		h[:score] = -3
+		h[:message] = "抑鬱"
+	when /#\+1(點子|想法|靈感).*?#/
+		h[:score] = 4
+		h[:message] = "思考"
+	when /#\+1(頓悟|洞見).*?#/
+		h[:score] = 5
+		h[:message] = "頓悟"
+	when /#\+1吐槽.*?#/
+		h[:score] = 2
+		h[:message] = "吐槽"
+	when /讀《.+?》|把《.+?》讀完了|讀.+?的「.+?」|讀「.+?」|讀完.+?《.+?》/
+		h[:score] = 10
+		h[:message] = "閱讀"
+	else
+		h[:score] = 1
+		h[:message] = "日常"
+	end
+	total_score += h[:score]
+	h[:message] += ": `#{v['text']}`"
+	data[Date.parse(v['created_at']) - d_day] += h[:score] #total_score
+	scores[v['created_at']] = h
+end
+
+
+# data.each_with_index do |d, i|
+# 	data[i] = data[i - 1] if d == 0
+# end
+
+db = SQLite3::Database.open(Dir.pwd + "/data/bookmarks.db")
+bookmarks = []
+db.execute("SELECT * FROM bookmarks ORDER BY watched_time DESC") do |row|
+	bookmarks << {
+					:url => row[1],
+					:watched_time => row[2][0..-7],
+					:title => row[3].gsub('(Saved)', '').gsub(/^\p{Z}*/, ''),
+					:starred => (row[4] == 'true'),
+					:note => row[5]
+				 }
+end
+db.close
+
+bookmarks.each do |bm|
+	total_score += 2
+	data[Date.parse(bm[:watched_time]) - d_day] += 2
+	scores[bm[:watched_time]] = {score: 2, message: "讀了一篇文章：`#{bm[:title]}`"}
+end
+
+scores.sort_by {|k, v| k }.reverse_each do |t, h|
+	md += "#{format(h[:score])} at #{t} 「#{h[:message]}」\n\n"
+end
+%>
+
+
+
+<%= Kramdown::Document.new("# ACHIEVEMENTS #{format(total_score)}").to_html %>
+
+<div id="main" style="width: 900px;height:400px;"></div>
+<script type="text/javascript">
+	var myChart = echarts.init(document.getElementById('main'));
+	
+	var date = [<%= date.join(', ') %>];
+	var data = [<%= data.join(', ') %>];
+
+	option = {
+	    tooltip: {
+	        trigger: 'axis',
+	        position: function (pt) {
+	            return [pt[0], '10%'];
+	        }
+	    },
+	    title: {
+	        left: 'center',
+	        text: '每日成就記錄',
+	    },
+	    toolbox: {
+	        feature: {
+	            dataZoom: {
+	                yAxisIndex: 'none'
+	            },
+	            restore: {},
+	            saveAsImage: {}
+	        }
+	    },
+	    xAxis: {
+	        type: 'category',
+	        boundaryGap: false,
+	        data: date
+	    },
+	    yAxis: {
+	        type: 'value',
+	        boundaryGap: [0, '100%']
+	    },
+	    dataZoom: [{
+	        type: 'inside',
+	        start: 0,
+	        end: 10
+	    }, {
+	        start: 0,
+	        end: 10,
+	        handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
+	        handleSize: '80%',
+	        handleStyle: {
+	            color: '#fff',
+	            shadowBlur: 3,
+	            shadowColor: 'rgba(0, 0, 0, 0.6)',
+	            shadowOffsetX: 2,
+	            shadowOffsetY: 2
+	        }
+	    }],
+	    series: [
+	        {
+	            name:'當日成就',
+	            type:'line',
+	            smooth:true,
+	            symbol: 'none',
+	            sampling: 'average',
+	            itemStyle: {
+	                normal: {
+	                    color: 'rgb(255, 70, 131)'
+	                }
+	            },
+	            areaStyle: {
+	                normal: {
+	                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+	                        offset: 0,
+	                        color: 'rgb(255, 158, 68)'
+	                    }, {
+	                        offset: 1,
+	                        color: 'rgb(255, 70, 131)'
+	                    }])
+	                }
+	            },
+	            data: data
+	        }
+	    ]
+	};
+	myChart.setOption(option);
+	
+</script>
+	
+<%= Kramdown::Document.new(md).to_html %>
