@@ -6,8 +6,9 @@ class MD5s
   attr_reader :md5s
   
   def initialize
-    @ignored_dirs = %W<. .. .git .gitignore .DS_Store .sass-cache #{__FILE__} md5s.json>
+    @ignored_dirs = %W<. .. .git .gitignore .DS_Store .sass-cache #{__FILE__} md5s.json bookmarks.db bookmarks.log douban.db fanfou.db>
     # __FILE__ : the name of the current file
+    # 這裏的路徑是有問題的，待除！
     
     @md5s = []
   end
@@ -19,8 +20,8 @@ class MD5s
   
   def get_all_md5(directory)
     Dir.foreach(directory) do |subdir|
-      next if @ignored_dirs.include? subdir # .scan(/(?<=\/)[\w\.]+$/).first
       dir = directory + '/' + subdir
+      next if @ignored_dirs.include? subdir
       if /\s/ =~ subdir
         new_dir = directory + '/' + subdir.gsub!(/\s/, '_')
         File.rename(dir, new_dir)
